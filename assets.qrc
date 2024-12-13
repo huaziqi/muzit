@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/all_music.png</file>
+        <file>assets/album_lists.png</file>
+        <file>assets/music_lists.png</file>
+        <file>assets/singer_lists.png</file>
+        <file>assets/style_lists.png</file>
+        <file>assets/audio_level.png</file>
+        <file>assets/only_play.png</file>
+        <file>assets/order_play.png</file>
+        <file>assets/play_last.png</file>
+        <file>assets/play_music.png</file>
+        <file>assets/play_next.png</file>
+        <file>assets/random_play.png</file>
+        <file>assets/play_lists.png</file>
+        <file>assets/history_visit.png</file>
+    </qresource>
+</RCC>
