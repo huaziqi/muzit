@@ -7,4 +7,4 @@
 
 
 
-[视频介绍](https://www.bilibili.com/video/BV18CqdYrEcv/)
+[视频介绍](https://www.bilibili.com/video/BV18CqdYrEcv/ "_blank")
