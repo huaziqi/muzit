@@ -1,0 +1,11 @@
+release/explorewidget.o
+release/main.o
+release/mainwidget.o
+release/operateDb.o
+release/playerwidget.o
+release/sharewidget.o
+release/qrc_assets.o
+release/moc_explorewidget.o
+release/moc_mainwidget.o
+release/moc_playerwidget.o
+release/moc_sharewidget.o
