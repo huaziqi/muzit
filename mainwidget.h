@@ -1,11 +1,19 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QWidget>
-
-class MainWidget : public QWidget
+#include "config.h"
+#include "common.h"
+#include "framelesswidget.h"
+class MainWidget : public FramelessWidget
 {
     Q_OBJECT
+
+private:
+
+private:
+
+protected:
+
 
 public:
     MainWidget(QWidget *parent = nullptr);

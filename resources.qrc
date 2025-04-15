@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/QSS"/>
+    <qresource prefix="/UI/Button">
+        <file>resources/closeButtonNormal.png</file>
+    </qresource>
+</RCC>

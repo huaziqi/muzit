@@ -1,13 +1,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonObject>
-
-class config
+#include "common.h"
+class Config
 {
+private:
+    void initConfig(const QString& filePath);
 public:
-    config();
+    void readConfig();
+    Config();
 };
 
 #endif // CONFIG_H

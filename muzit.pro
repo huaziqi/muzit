@@ -10,10 +10,20 @@ CONFIG += c++17
 
 SOURCES += \
     config.cpp \
+    framelesswidget.cpp \
     main.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    titlebar.cpp
 
 HEADERS += \
+    common.h \
     config.h \
-    mainwidget.h
+    framelesswidget.h \
+    mainwidget.h \
+    titlebar.h
+
+RESOURCES += \
+    resources.qrc
+
+FORMS +=
 
