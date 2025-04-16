@@ -6,24 +6,26 @@ TitleBar::TitleBar(QWidget *parent)
 
     mainLayout = new QHBoxLayout(this);
     this->setLayout(mainLayout);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+
+
     titleLabel = new QLabel(this);
     mainLayout->addWidget(titleLabel);
 
-
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    this->autoFillBackground();
-
     closeButton = new QPushButton(this);
-    closeButton->setFixedSize(25, 25);
-
-    closeButton->setStyleSheet("QPushButton{"
-                               "border-radius: 12px;"
-                               "}");
+    closeButton->setObjectName("closeButton");
+    closeButton->setFixedSize(15, 15);
     mainLayout->addWidget(closeButton);
+
     QIcon closeButtonIcon(":/UI/Button/resources/closeButtonNormal.png");
     closeButton->setIcon(closeButtonIcon);
-    closeButton->setIconSize(QSize(25, 25));
+    closeButton->setIconSize(QSize(15, 15));
+    closeButton->setStyleSheet("border-radius: 12px;");
+    connect(closeButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
+
+    //this->setMouseTracking(true);
+    this->autoFillBackground();
 
 }
 
@@ -32,14 +34,21 @@ void TitleBar::setTitle(const QString &title)
     titleLabel->setText(title);
 }
 
-void TitleBar::mousePressEvent(QMouseEvent *event)
+
+void TitleBar::onButtonClicked()
 {
-    pntMouseOffSet = event->globalPosition().toPoint() - parentWidget()->frameGeometry().topLeft();
+
+    QPushButton *sendedButton = qobject_cast<QPushButton*>(sender());
+    qDebug() << sendedButton->objectName();
+    if(sendedButton->objectName() == "closeButton"){
+        emit buttonEvent("closeWindow");
+    }else if(sendedButton->objectName() == "minimumButton"){
+        emit buttonEvent("minimunWindow");
+    }else if(sendedButton->objectName() == "maximumButton"){
+        emit buttonEvent("maximunWindow");
+    }
+
+
 }
 
 
-void TitleBar::mouseMoveEvent(QMouseEvent *event)
-{
-    emit mouseMoveIn(event->globalPosition().toPoint());
-    parentWidget()->move(event->globalPosition().toPoint() - pntMouseOffSet);
-}

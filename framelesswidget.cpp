@@ -5,23 +5,37 @@
 FramelessWidget::FramelessWidget(QWidget *parent)
     : QWidget{parent}{
     mainLayout = new QVBoxLayout(this);
-    contentLayout = new QHBoxLayout();
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    titleBar = new TitleBar();
+    mainLayout->setContentsMargins(5, 5, 5, 5);
+
+    titleBar = new TitleBar(this);
     mainLayout->addWidget(titleBar);
+    titleBar->installEventFilter(this);
+
+    contentLayout = new QHBoxLayout();
     mainLayout->addLayout(contentLayout, 1);
+    contentLayout->setContentsMargins(0, 5, 0, 0);
+
+
+    connect(titleBar, &TitleBar::buttonEvent, this, &FramelessWidget::titleBarEvent);
+
+
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setMouseTracking(true);
-
-    connect(titleBar, &TitleBar::mouseMoveIn, this, &FramelessWidget::setCursorShape);
 
 }
 
 FramelessWidget::~FramelessWidget()
 {
 
+}
+
+void FramelessWidget::titleBarEvent(const QString &signal)
+{
+    if(signal == "closeWindow"){
+        this->close();
+    }
 }
 
 void FramelessWidget::setCursorShape(const QPoint &point)
@@ -50,11 +64,24 @@ void FramelessWidget::setCursorShape(const QPoint &point)
         location = CENTER, this->setCursor(Qt::ArrowCursor);
 }
 
+bool FramelessWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched){
+        if (event->type() == QEvent::Enter) {
+
+            this->setCursor(Qt::ArrowCursor);
+            location = CENTER;
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+
+}
+
 void FramelessWidget::mousePressEvent(QMouseEvent *event){
 
     switch(event->button()){
     case Qt::LeftButton:
-        qDebug() << location;
+
         if(location == CENTER)
             pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
         bIsLeftPressed = true;
@@ -126,11 +153,12 @@ void FramelessWidget::paintEvent(QPaintEvent *event)
 {
 
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);  // 使绘制更加平滑
-    painter.setBrush(QBrush(QColor(255, 255, 255)));
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setBrush(QBrush(QColor(200, 200, 200)));
     painter.setPen(Qt::transparent);
     QRect rect = this->rect();
-    painter.drawRoundedRect(rect, 4, 4);  // 绘制一个带有圆角的矩形窗口
+    painter.drawRoundedRect(rect, 4, 4);
 
 }
+
 

@@ -16,11 +16,13 @@ private:
     QPushButton *closeButton, *maxnumButton, *minmunButton;
     QPoint pntMouseOffSet;
 signals:
-    void mouseMoveIn(const QPoint& point);
+    void buttonEvent(const QString& signal);
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-signals:
+
+private slots:
+    void onButtonClicked();
+private:
+    //bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // TITLEBAR_H

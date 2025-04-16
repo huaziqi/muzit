@@ -29,19 +29,24 @@ private:
     bool bIsLeftPressed = false;
     Location location = NONE;
     QRect rectMain;
+    QWidget* wi;
 private:
-
+    bool eventFilter(QObject *watched, QEvent *event);
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+
 public:
     void setCursorShape(const QPoint& point);
     explicit FramelessWidget(QWidget *parent = nullptr);
     ~FramelessWidget();
 
 signals:
+
+private slots:
+    void titleBarEvent(const QString& signal);
 };
 
 #endif // FRAMELESSWIDGET_H

@@ -4,6 +4,7 @@
 #endif // COMMON_H
 
 
+#include <QCoreApplication>
 //文件处理
 #include <QFile>
 #include <QJsonDocument>
