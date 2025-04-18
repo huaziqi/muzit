@@ -39,7 +39,7 @@ TitleBar::TitleBar(QWidget *parent)
     connect(closeButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
     connect(minimunButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
     connect(maxinumButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
-    //this->setMouseTracking(true);
+
     this->autoFillBackground();
 
 }

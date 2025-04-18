@@ -4,7 +4,6 @@
 #include "common.h"
 #include "titlebar.h"
 
-
 enum Location{
     TOP,
     BOTTOM,
@@ -18,23 +17,18 @@ enum Location{
     NONE
 };
 
-
-
 class FramelessWidget : public QWidget
 {
     Q_OBJECT
 private:
     QScreen* wholeScreen;
-    QVBoxLayout* mainLayout;
-    QHBoxLayout* contentLayout;
-
     QPoint pntMouseOffSet;
-    bool bIsLeftPressed = false;
     Location location = NONE;
     QRect rectMain, wholeRect, primaryRect;
-    QWidget* wi;
-    bool maxied = false;
+    bool maxied = false, bIsLeftPressed = false;
 protected:
+    QVBoxLayout* mainLayout;
+    QHBoxLayout* contentLayout;
     TitleBar *titleBar;
 private:
     void showMinimized();
