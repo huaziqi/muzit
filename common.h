@@ -30,3 +30,5 @@
 #include <QColor>
 #include <QIcon>
 #include <QPainterPath>
+
+#include <QPropertyAnimation>

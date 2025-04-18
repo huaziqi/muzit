@@ -17,14 +17,14 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     contentLayout->setContentsMargins(0, 5, 0, 0);
 
     wholeScreen = this->screen();
-
-
+    wholeRect = wholeScreen->availableGeometry();
     connect(titleBar, &TitleBar::buttonEvent, this, &FramelessWidget::titleBarEvent);
-
 
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setMouseTracking(true);
+
+    this->setMaximumSize(wholeRect.width(), wholeRect.height());
 
 }
 
@@ -36,13 +36,15 @@ FramelessWidget::~FramelessWidget()
 void FramelessWidget::titleBarEvent(const QString &signal)
 {
 
-    qDebug() << signal;
     if(signal == "closeWindow"){
         this->close();
-    }else if(signal == "minimumWindow"){
-
-    }else if(signal == "maximumWindow"){
-
+    }else if(signal == "miniWindow"){
+        showMinimized();
+    }else if(signal == "maxiWindow"){
+        primaryRect = this->rect();
+        this->resize(wholeRect.width(), wholeRect.height());
+        this->move(0,0);
+        maxied = true;
     }
 }
 
@@ -72,11 +74,30 @@ void FramelessWidget::setCursorShape(const QPoint &point)
         location = CENTER, this->setCursor(Qt::ArrowCursor);
 }
 
+void FramelessWidget::showMinimized()
+{
+    primaryRect = this->geometry();
+
+    QPropertyAnimation *sizeAnimation = new QPropertyAnimation(this, "geometry");
+    sizeAnimation->setDuration(100);
+    sizeAnimation->setStartValue(this->geometry());
+    sizeAnimation->setEndValue(QRect(wholeRect.x() + wholeRect.width()/2 - 1, 1, 2, 1));
+    connect(sizeAnimation, &QPropertyAnimation::finished, [this]() {
+        QWidget::showMinimized();  // 真正最小化
+    });
+    sizeAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    QPropertyAnimation *opacityAnimation = new QPropertyAnimation(this, "windowOpacity");
+    opacityAnimation->setDuration(70);
+    opacityAnimation->setStartValue(this->windowOpacity());
+    opacityAnimation->setEndValue(0);
+    opacityAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+
+}
+
 bool FramelessWidget::eventFilter(QObject *watched, QEvent *event)
 {
     if(watched){
         if (event->type() == QEvent::Enter) {
-
             this->setCursor(Qt::ArrowCursor);
             location = CENTER;
         }
@@ -99,6 +120,7 @@ void FramelessWidget::mousePressEvent(QMouseEvent *event){
 void FramelessWidget::mouseReleaseEvent(QMouseEvent *event){
     switch(event->button()){
     case Qt::LeftButton:
+        maxied = false;
         bIsLeftPressed = false;
         break;
     }
@@ -113,7 +135,13 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
         return;
     }
     if(location == CENTER){
-        move(mousePoint - pntMouseOffSet);
+        if(maxied){
+            this->resize(primaryRect.width(), primaryRect.height());
+            this->move(mousePoint.x() - (1.0 * mousePoint.x() / wholeRect.width()) * primaryRect.width(), mousePoint.y() - 1.0 * mousePoint.y() / wholeRect.height() * primaryRect.height());
+            return;
+        }
+        else
+            move(mousePoint - pntMouseOffSet);
         return;
     }
     QRect reMove(topLeft, bottomRight);
@@ -158,7 +186,6 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
 
 void FramelessWidget::paintEvent(QPaintEvent *event)
 {
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setBrush(QBrush(QColor(200, 200, 200)));
@@ -166,6 +193,19 @@ void FramelessWidget::paintEvent(QPaintEvent *event)
     QRect rect = this->rect();
     painter.drawRoundedRect(rect, 4, 4);
 
+}
+
+void FramelessWidget::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::WindowStateChange) {
+        QWindowStateChangeEvent *stateEvent = static_cast<QWindowStateChangeEvent*>(event);
+        if (stateEvent->oldState() & Qt::WindowMinimized) {
+            this->resize(primaryRect.width(), primaryRect.height());
+            this->move(primaryRect.x(), primaryRect.y());
+            this->setWindowOpacity(1);
+        }
+    }
+    QWidget::changeEvent(event);
 }
 
 

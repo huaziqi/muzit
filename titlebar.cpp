@@ -14,14 +14,14 @@ TitleBar::TitleBar(QWidget *parent)
     mainLayout->addWidget(titleLabel);
 
     minimunButton = new QPushButton(this);
-    minimunButton->setObjectName("minimunButton");
+    minimunButton->setObjectName("miniButton");
     minimunButton->setFixedSize(15, 15);
     mainLayout->addWidget(minimunButton);
     minimunButton->setStyleSheet("border-radius: 12px;"
                                  "background: black;");
 
     maxinumButton = new QPushButton(this);
-    maxinumButton->setObjectName("maxinumButton");
+    maxinumButton->setObjectName("maxiButton");
     maxinumButton->setFixedSize(15, 15);
     mainLayout->addWidget(maxinumButton);
     maxinumButton->setStyleSheet("border-radius: 12px;"
@@ -31,10 +31,6 @@ TitleBar::TitleBar(QWidget *parent)
     closeButton->setObjectName("closeButton");
     closeButton->setFixedSize(15, 15);
     mainLayout->addWidget(closeButton);
-
-
-
-
 
     QIcon closeButtonIcon(":/UI/Button/resources/closeButtonNormal.png");
     closeButton->setIcon(closeButtonIcon);
@@ -58,13 +54,13 @@ void TitleBar::onButtonClicked()
 {
 
     QPushButton *sendedButton = qobject_cast<QPushButton*>(sender());
-    qDebug() << sendedButton->objectName();
+
     if(sendedButton->objectName() == "closeButton"){
         emit buttonEvent("closeWindow");
-    }else if(sendedButton->objectName() == "minimumButton"){
-        emit buttonEvent("minimunWindow");
-    }else if(sendedButton->objectName() == "maximumButton"){
-        emit buttonEvent("maximunWindow");
+    }else if(sendedButton->objectName() == "miniButton"){
+        emit buttonEvent("miniWindow");
+    }else if(sendedButton->objectName() == "maxiButton"){
+        emit buttonEvent("maxiWindow");
     }
 
 

@@ -18,6 +18,8 @@ enum Location{
     NONE
 };
 
+
+
 class FramelessWidget : public QWidget
 {
     Q_OBJECT
@@ -25,20 +27,24 @@ private:
     QScreen* wholeScreen;
     QVBoxLayout* mainLayout;
     QHBoxLayout* contentLayout;
-    TitleBar *titleBar;
+
     QPoint pntMouseOffSet;
     bool bIsLeftPressed = false;
     Location location = NONE;
-    QRect rectMain, wholeRect;
+    QRect rectMain, wholeRect, primaryRect;
     QWidget* wi;
+    bool maxied = false;
+protected:
+    TitleBar *titleBar;
 private:
+    void showMinimized();
     bool eventFilter(QObject *watched, QEvent *event);
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
-
+    void changeEvent(QEvent *event) override;
 public:
     void setCursorShape(const QPoint& point);
     explicit FramelessWidget(QWidget *parent = nullptr);
