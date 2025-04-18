@@ -16,6 +16,8 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     mainLayout->addLayout(contentLayout, 1);
     contentLayout->setContentsMargins(0, 5, 0, 0);
 
+    wholeScreen = this->screen();
+
 
     connect(titleBar, &TitleBar::buttonEvent, this, &FramelessWidget::titleBarEvent);
 
@@ -33,8 +35,14 @@ FramelessWidget::~FramelessWidget()
 
 void FramelessWidget::titleBarEvent(const QString &signal)
 {
+
+    qDebug() << signal;
     if(signal == "closeWindow"){
         this->close();
+    }else if(signal == "minimumWindow"){
+
+    }else if(signal == "maximumWindow"){
+
     }
 }
 
@@ -81,7 +89,6 @@ void FramelessWidget::mousePressEvent(QMouseEvent *event){
 
     switch(event->button()){
     case Qt::LeftButton:
-
         if(location == CENTER)
             pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
         bIsLeftPressed = true;

@@ -6,24 +6,43 @@ TitleBar::TitleBar(QWidget *parent)
 
     mainLayout = new QHBoxLayout(this);
     this->setLayout(mainLayout);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(2);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
 
     titleLabel = new QLabel(this);
     mainLayout->addWidget(titleLabel);
 
+    minimunButton = new QPushButton(this);
+    minimunButton->setObjectName("minimunButton");
+    minimunButton->setFixedSize(15, 15);
+    mainLayout->addWidget(minimunButton);
+    minimunButton->setStyleSheet("border-radius: 12px;"
+                                 "background: black;");
+
+    maxinumButton = new QPushButton(this);
+    maxinumButton->setObjectName("maxinumButton");
+    maxinumButton->setFixedSize(15, 15);
+    mainLayout->addWidget(maxinumButton);
+    maxinumButton->setStyleSheet("border-radius: 12px;"
+                                 "background: black;");
+
     closeButton = new QPushButton(this);
     closeButton->setObjectName("closeButton");
     closeButton->setFixedSize(15, 15);
     mainLayout->addWidget(closeButton);
+
+
+
+
 
     QIcon closeButtonIcon(":/UI/Button/resources/closeButtonNormal.png");
     closeButton->setIcon(closeButtonIcon);
     closeButton->setIconSize(QSize(15, 15));
     closeButton->setStyleSheet("border-radius: 12px;");
     connect(closeButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
-
+    connect(minimunButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
+    connect(maxinumButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
     //this->setMouseTracking(true);
     this->autoFillBackground();
 

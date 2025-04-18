@@ -13,7 +13,7 @@ private:
     QHBoxLayout *mainLayout;
     QWidget* frontWidget;
     QLabel *titleLabel;
-    QPushButton *closeButton, *maxnumButton, *minmunButton;
+    QPushButton *closeButton, *maxinumButton, *minimunButton;
     QPoint pntMouseOffSet;
 signals:
     void buttonEvent(const QString& signal);

@@ -22,13 +22,14 @@ class FramelessWidget : public QWidget
 {
     Q_OBJECT
 private:
+    QScreen* wholeScreen;
     QVBoxLayout* mainLayout;
     QHBoxLayout* contentLayout;
     TitleBar *titleBar;
     QPoint pntMouseOffSet;
     bool bIsLeftPressed = false;
     Location location = NONE;
-    QRect rectMain;
+    QRect rectMain, wholeRect;
     QWidget* wi;
 private:
     bool eventFilter(QObject *watched, QEvent *event);
