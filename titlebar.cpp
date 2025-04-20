@@ -12,6 +12,8 @@ TitleBar::TitleBar(QWidget *parent)
 
     titleLabel = new QLabel(this);
     mainLayout->addWidget(titleLabel);
+    titleLabel->setAlignment(Qt::AlignCenter);
+    titleLabel->setStyleSheet("font-size: 15px;");
 
     minimunButton = new QPushButton(this);
     minimunButton->setObjectName("miniButton");

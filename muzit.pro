@@ -10,16 +10,22 @@ CONFIG += c++17
 
 SOURCES += \
     config.cpp \
+    explorewidget.cpp \
     framelesswidget.cpp \
+    localwidget.cpp \
     main.cpp \
     mainwidget.cpp \
+    playerwidget.cpp \
     titlebar.cpp
 
 HEADERS += \
     common.h \
     config.h \
+    explorewidget.h \
     framelesswidget.h \
+    localwidget.h \
     mainwidget.h \
+    playerwidget.h \
     titlebar.h
 
 RESOURCES += \

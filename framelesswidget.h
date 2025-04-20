@@ -24,7 +24,7 @@ private:
     QScreen* wholeScreen;
     QPoint pntMouseOffSet;
     Location location = NONE;
-    QRect rectMain, wholeRect, primaryRect;
+    QRect rectMain, wholeRect, primaryRect, beforeMaxiedRect;
     bool maxied = false, bIsLeftPressed = false;
 protected:
     QVBoxLayout* mainLayout;

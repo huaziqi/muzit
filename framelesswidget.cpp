@@ -1,12 +1,12 @@
 #include "framelesswidget.h"
 
-#define PADDING 5
+#define PADDING 2
 
 FramelessWidget::FramelessWidget(QWidget *parent)
     : QWidget{parent}{
     mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setContentsMargins(8, 8, 8, 8);
 
     titleBar = new TitleBar(this);
     mainLayout->addWidget(titleBar);
@@ -14,7 +14,7 @@ FramelessWidget::FramelessWidget(QWidget *parent)
 
     contentLayout = new QHBoxLayout();
     mainLayout->addLayout(contentLayout, 1);
-    contentLayout->setContentsMargins(0, 5, 0, 0);
+    contentLayout->setContentsMargins(0, 6, 0, 0);
 
     wholeScreen = this->screen();
     wholeRect = wholeScreen->availableGeometry();
@@ -76,11 +76,11 @@ void FramelessWidget::setCursorShape(const QPoint &point)
 
 void FramelessWidget::showMinimized()
 {
-    primaryRect = this->geometry();
+    beforeMaxiedRect = this->geometry();
 
     QPropertyAnimation *sizeAnimation = new QPropertyAnimation(this, "geometry");
     sizeAnimation->setDuration(100);
-    sizeAnimation->setStartValue(this->geometry());
+    sizeAnimation->setStartValue(beforeMaxiedRect);
     sizeAnimation->setEndValue(QRect(wholeRect.x() + wholeRect.width()/2 - 1, 1, 2, 1));
     connect(sizeAnimation, &QPropertyAnimation::finished, [this]() {
         QWidget::showMinimized();  // 真正最小化
@@ -200,8 +200,8 @@ void FramelessWidget::changeEvent(QEvent *event)
     if (event->type() == QEvent::WindowStateChange) {
         QWindowStateChangeEvent *stateEvent = static_cast<QWindowStateChangeEvent*>(event);
         if (stateEvent->oldState() & Qt::WindowMinimized) {
-            this->resize(primaryRect.width(), primaryRect.height());
-            this->move(primaryRect.x(), primaryRect.y());
+            this->resize(beforeMaxiedRect.width(), beforeMaxiedRect.height());
+            this->move(beforeMaxiedRect.x(), beforeMaxiedRect.y());
             this->setWindowOpacity(1);
         }
     }

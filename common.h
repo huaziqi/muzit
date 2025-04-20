@@ -22,8 +22,11 @@
 #include <QHBoxLayout>
 
 //控件
+#include <QStackedWidget>
 #include <QPushButton>
+#include <QButtonGroup>
 #include <QLabel>
+
 
 //UI
 #include <QPainter>
