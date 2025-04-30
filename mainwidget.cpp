@@ -12,11 +12,8 @@ MainWidget::MainWidget(QWidget *parent)
 
     initSidebar();
     initRight();
-    exploreWidget = new ExploreWidget();
-    funcWidget->addWidget(exploreWidget);
-    localWidget = new LocalWidget();
-    funcWidget->addWidget(localWidget);
-    funcWidget->setCurrentWidget(0);
+
+
 }
 
 void MainWidget::initSidebar()
@@ -27,7 +24,8 @@ void MainWidget::initSidebar()
 
     contentLayout->addWidget(sidebarWidget);
     contentLayout->setAlignment(Qt::AlignLeft);
-    sidebarWidget->setFixedWidth(100);
+    sidebarWidget->setMinimumWidth(100);
+    sidebarWidget->setMaximumWidth(200);
     sideTitle = new QLabel(this);
 
     sideTitle->setAlignment(Qt::AlignCenter);
@@ -40,6 +38,11 @@ void MainWidget::initSidebar()
     exploreButton = new QPushButton("探索音乐");
 
     localMusicButton = new QPushButton("本地音乐");
+    exploreButton->setMinimumSize(16, 9);
+    localMusicButton->setMinimumSize(16, 9);
+    exploreButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    localMusicButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
 
     sidebarButtons->addButton(exploreButton, 0);
     sidebarButtons->addButton(localMusicButton, 1);
@@ -56,10 +59,20 @@ void MainWidget::initRight()
     contentLayout->addWidget(rightWidget);
     rightWidget->setLayout(rightLayout);
     funcWidget = new QStackedWidget();
+    exploreWidget = new ExploreWidget();
+    funcWidget->addWidget(exploreWidget);
+    localWidget = new LocalWidget();
+    funcWidget->addWidget(localWidget);
+    funcWidget->setCurrentWidget(0);
     playerWidget = new PlayerWidget();
     rightLayout->addWidget(funcWidget, 1);
     rightLayout->addWidget(playerWidget);
-    this->setStyleSheet("border: 2px solid blue;");
+
+}
+
+void MainWidget::resizeEvent(QResizeEvent *event)
+{
+
 }
 
 MainWidget::~MainWidget() {}

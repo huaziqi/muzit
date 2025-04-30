@@ -28,7 +28,7 @@ private:
     void initSidebar();
     void initRight();
 protected:
-
+    void resizeEvent(QResizeEvent* event);
 
 public:
     MainWidget(QWidget *parent = nullptr);

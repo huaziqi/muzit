@@ -25,6 +25,8 @@ private:
     QPoint pntMouseOffSet;
     Location location = NONE;
     QRect rectMain, wholeRect, primaryRect, beforeMaxiedRect;
+    QRect lastRect;//为了防止突然变形
+    bool hasRecordedFRect = false;
     bool maxied = false, bIsLeftPressed = false;
 protected:
     QVBoxLayout* mainLayout;

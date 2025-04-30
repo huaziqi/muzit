@@ -11,6 +11,7 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     titleBar = new TitleBar(this);
     mainLayout->addWidget(titleBar);
     titleBar->installEventFilter(this);
+    mainLayout->installEventFilter(this);
 
     contentLayout = new QHBoxLayout();
     mainLayout->addLayout(contentLayout, 1);
@@ -21,7 +22,7 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     connect(titleBar, &TitleBar::buttonEvent, this, &FramelessWidget::titleBarEvent);
 
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
-    this->setAttribute(Qt::WA_TranslucentBackground);
+    this->setAttribute(Qt::WA_TranslucentBackground); //启用透明背景
     this->setMouseTracking(true);
 
     this->setMaximumSize(wholeRect.width(), wholeRect.height());
@@ -98,6 +99,10 @@ bool FramelessWidget::eventFilter(QObject *watched, QEvent *event)
 {
     if(watched){
         if (event->type() == QEvent::Enter) {
+            this->setCursor(Qt::ArrowCursor);
+            location = CENTER;
+        }
+        else if(event->type() == QEvent::Leave){
             this->setCursor(Qt::ArrowCursor);
             location = CENTER;
         }
@@ -181,7 +186,17 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
             reMove.setX(mousePoint.x());
         break;
     }
+    qDebug() << lastRect << " " << reMove;
+    if(!hasRecordedFRect)
+        lastRect = reMove, hasRecordedFRect = true;
+    if(std::abs(lastRect.width() - reMove.width()) > 100 || std::abs(lastRect.height() - reMove.height()) > 100){
+        location = CENTER;
+        this->setCursor(Qt::ArrowCursor);
+        hasRecordedFRect = false;
+        return;
+    }
     this->setGeometry(reMove);
+    lastRect = reMove;
 }
 
 void FramelessWidget::paintEvent(QPaintEvent *event)
