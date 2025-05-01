@@ -24,6 +24,8 @@ private:
 
     PlayerWidget* playerWidget;
 
+    QFont *sideBarFont;
+
 private:
     void initSidebar();
     void initRight();

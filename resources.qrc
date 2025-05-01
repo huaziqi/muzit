@@ -7,4 +7,7 @@
         <file>resources/minimumBotton_normal.png</file>
         <file>resources/closeButton_clicked.png</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>resources/font/VonwaonBitmap.ttf</file>
+    </qresource>
 </RCC>

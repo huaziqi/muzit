@@ -38,7 +38,7 @@ void Config::readConfig()
             else QMessageBox::warning(nullptr, "警告", "文件夹创建失败");
         }
         else
-            initConfig(configPath); //是否存在其他应用配置文件同名？maybe
+            initConfig(configPath); //是否存在其他应用配置文件夹同名？maybe
     }
 }
 

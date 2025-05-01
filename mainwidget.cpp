@@ -6,46 +6,58 @@ MainWidget::MainWidget(QWidget *parent)
     : FramelessWidget(parent){
     Config config;
     config.readConfig();
+    common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");
     titleBar->setTitle("Muzit");
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     this->setMinimumSize(QSize(200, 150));
-
+    this->resize(800, 600);
+    sideBarFont = new QFont("VonwaonBitmap 16px", 16);
     initSidebar();
     initRight();
 
 
 }
 
+
+
 void MainWidget::initSidebar()
 {
     sidebarWidget = new QWidget(this);
     sidebarLayout = new QVBoxLayout();
     sidebarWidget->setLayout(sidebarLayout);
+    sidebarWidget->setFixedWidth(200);
 
     contentLayout->addWidget(sidebarWidget);
     contentLayout->setAlignment(Qt::AlignLeft);
-    sidebarWidget->setMinimumWidth(100);
-    sidebarWidget->setMaximumWidth(200);
     sideTitle = new QLabel(this);
     sideTitle->setAlignment(Qt::AlignCenter);
     sidebarLayout->setAlignment(Qt::AlignTop);
     sideTitle->setText("Muzit");
+    sideTitle->setFont(*sideBarFont);
     sidebarLayout->addWidget(sideTitle);
 
     sidebarButtons = new QButtonGroup();
     exploreButton = new QPushButton("探索音乐");
     localMusicButton = new QPushButton("本地音乐");
-    exploreButton->setMinimumSize(16, 9);
-    localMusicButton->setMinimumSize(16, 9);
-    exploreButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    localMusicButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    exploreButton->setFixedSize(160, 50);
+    localMusicButton->setFixedSize(160, 50);
+
+
+
+    exploreButton->setFont(*sideBarFont);
+    localMusicButton->setFont(*sideBarFont);
+    exploreButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    localMusicButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     sidebarButtons->addButton(exploreButton, 0);
     sidebarButtons->addButton(localMusicButton, 1);
     sidebarLayout->addWidget(exploreButton);
     sidebarLayout->addWidget(localMusicButton);
 
+    sidebarLayout->addStretch(1);
 }
+
+
 
 void MainWidget::initRight()
 {
@@ -62,13 +74,12 @@ void MainWidget::initRight()
     playerWidget = new PlayerWidget();
     rightLayout->addWidget(funcWidget, 1);
     rightLayout->addWidget(playerWidget);
-
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
-    double width = this->width();
-    sidebarWidget->resize(width * 0.25, this->height());
+
+
 }
 
 MainWidget::~MainWidget() {}

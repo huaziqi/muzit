@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#endif // COMMON_H
+
 
 
 #include <QCoreApplication>
@@ -13,6 +13,9 @@
 //事件处理
 #include <QMouseEvent>
 #include <QResizeEvent>
+
+//数学
+#include <QtMath>
 
 //页面布局
 
@@ -33,5 +36,28 @@
 #include <QColor>
 #include <QIcon>
 #include <QPainterPath>
+#include <QFontDatabase>
+
+
+#include <QApplication>
 
 #include <QPropertyAnimation>
+
+namespace common {
+    inline bool loadFont(const QString& fontPath){ //加载字体
+        int loadFontId = QFontDatabase::addApplicationFont(fontPath);
+        if(loadFontId == -1){
+            return false;
+        }
+        QStringList fontFamliy = QFontDatabase::applicationFontFamilies(loadFontId);
+        if(fontFamliy.empty()){
+            qDebug() << "[common.h] 字体" << fontPath << "为空";
+            return false;
+        }
+        qDebug() << fontFamliy.at(0);
+        return true;
+
+}
+}
+
+#endif // COMMON_H

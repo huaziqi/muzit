@@ -1,6 +1,6 @@
 #include "framelesswidget.h"
 
-#define PADDING 2
+#define PADDING 4
 
 FramelessWidget::FramelessWidget(QWidget *parent)
     : QWidget{parent}{
@@ -192,6 +192,7 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
         location = CENTER;
         this->setCursor(Qt::ArrowCursor);
         hasRecordedFRect = false;
+        pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
         return;
     }
     this->setGeometry(reMove);
