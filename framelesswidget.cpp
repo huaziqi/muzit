@@ -186,7 +186,6 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
             reMove.setX(mousePoint.x());
         break;
     }
-    qDebug() << lastRect << " " << reMove;
     if(!hasRecordedFRect)
         lastRect = reMove, hasRecordedFRect = true;
     if(std::abs(lastRect.width() - reMove.width()) > 100 || std::abs(lastRect.height() - reMove.height()) > 100){

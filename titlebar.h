@@ -11,14 +11,16 @@ public:
     void setTitle(const QString& title);
 private:
     QHBoxLayout *mainLayout;
-    QWidget* frontWidget;
-    QLabel *titleLabel;
-    QPushButton *closeButton, *maxinumButton, *minimunButton;
-    QPoint pntMouseOffSet;
+
+    QLabel *titleLabel; //标题栏
+
+    QPushButton *closeButton, *maximumButton, *minimunButton;
+
+    QIcon closeButtonIcon, maximumButtonIcon, minimumButtonIcon;//按钮背景icon
 signals:
     void buttonEvent(const QString& signal);
 protected:
-
+    bool eventFilter(QObject *watched, QEvent *event) override;
 private slots:
     void onButtonClicked();
 private:

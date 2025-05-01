@@ -6,7 +6,7 @@ TitleBar::TitleBar(QWidget *parent)
 
     mainLayout = new QHBoxLayout(this);
     this->setLayout(mainLayout);
-    mainLayout->setSpacing(2);
+    mainLayout->setSpacing(4);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
 
@@ -15,32 +15,40 @@ TitleBar::TitleBar(QWidget *parent)
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setStyleSheet("font-size: 15px;");
 
+
+    //设置一些窗口操作按钮
     minimunButton = new QPushButton(this);
     minimunButton->setObjectName("miniButton");
-    minimunButton->setFixedSize(15, 15);
+    minimunButton->setFixedSize(18,18);
     mainLayout->addWidget(minimunButton);
-    minimunButton->setStyleSheet("border-radius: 12px;"
-                                 "background: black;");
+    minimunButton->setStyleSheet("border-radius: 18px;");
 
-    maxinumButton = new QPushButton(this);
-    maxinumButton->setObjectName("maxiButton");
-    maxinumButton->setFixedSize(15, 15);
-    mainLayout->addWidget(maxinumButton);
-    maxinumButton->setStyleSheet("border-radius: 12px;"
-                                 "background: black;");
+    maximumButton = new QPushButton(this);
+    maximumButton->setObjectName("maxiButton");
+    maximumButton->setFixedSize(19, 19);
+    mainLayout->addWidget(maximumButton);
+    maximumButton->setStyleSheet("border-radius: 18px;");
 
     closeButton = new QPushButton(this);
     closeButton->setObjectName("closeButton");
-    closeButton->setFixedSize(15, 15);
+    closeButton->setFixedSize(20, 20);
     mainLayout->addWidget(closeButton);
+    closeButton->setStyleSheet("border-radius: 18px;");
 
-    QIcon closeButtonIcon(":/UI/Button/resources/closeButtonNormal.png");
+    closeButtonIcon = QIcon(":/UI/Button/resources/closeButton_normal.png");
+    minimumButtonIcon = QIcon(":/UI/Button/resources/minimumBotton_normal.png");
+    maximumButtonIcon = QIcon(":/UI/Button/resources/maximumButton_normal.png");
+    closeButton->setIconSize(QSize(20, 20));
+    maximumButton->setIconSize(QSize(19, 19));
+    minimunButton->setIconSize(QSize(18, 18));
+
     closeButton->setIcon(closeButtonIcon);
-    closeButton->setIconSize(QSize(15, 15));
-    closeButton->setStyleSheet("border-radius: 12px;");
+    minimunButton->setIcon(minimumButtonIcon);
+    maximumButton->setIcon(maximumButtonIcon);
+    closeButton->installEventFilter(this);
     connect(closeButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
     connect(minimunButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
-    connect(maxinumButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
+    connect(maximumButton, &QPushButton::clicked, this, &TitleBar::onButtonClicked);
 
     this->autoFillBackground();
 
@@ -49,6 +57,31 @@ TitleBar::TitleBar(QWidget *parent)
 void TitleBar::setTitle(const QString &title)
 {
     titleLabel->setText(title);
+}
+
+bool TitleBar::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched == closeButton){
+        if(event->type() == QEvent::Enter){
+            closeButtonIcon = QIcon(":/UI/Button/resources/closeButton_hover.png");
+            closeButton->setIcon(closeButtonIcon);
+            return true;
+        }
+        else if(event->type() == QEvent::Leave){
+            closeButtonIcon = QIcon(":/UI/Button/resources/closeButton_normal.png");
+            closeButton->setIcon(closeButtonIcon);
+            return true;
+        }
+        else if(event->type() == QEvent::MouseButtonPress){
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+            if(mouseEvent->button() == Qt::LeftButton){
+                closeButtonIcon = QIcon(":/UI/Button/resources/closeButton_clicked.png");
+                closeButton->setIcon(closeButtonIcon);
+            }
+        }
+
+    }
+    return false;
 }
 
 
@@ -64,7 +97,6 @@ void TitleBar::onButtonClicked()
     }else if(sendedButton->objectName() == "maxiButton"){
         emit buttonEvent("maxiWindow");
     }
-
 
 }
 

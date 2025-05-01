@@ -27,22 +27,18 @@ void MainWidget::initSidebar()
     sidebarWidget->setMinimumWidth(100);
     sidebarWidget->setMaximumWidth(200);
     sideTitle = new QLabel(this);
-
     sideTitle->setAlignment(Qt::AlignCenter);
-
     sidebarLayout->setAlignment(Qt::AlignTop);
     sideTitle->setText("Muzit");
     sidebarLayout->addWidget(sideTitle);
 
     sidebarButtons = new QButtonGroup();
     exploreButton = new QPushButton("探索音乐");
-
     localMusicButton = new QPushButton("本地音乐");
     exploreButton->setMinimumSize(16, 9);
     localMusicButton->setMinimumSize(16, 9);
     exploreButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     localMusicButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
 
     sidebarButtons->addButton(exploreButton, 0);
     sidebarButtons->addButton(localMusicButton, 1);
@@ -53,7 +49,6 @@ void MainWidget::initSidebar()
 
 void MainWidget::initRight()
 {
-
     rightLayout = new QVBoxLayout();
     rightWidget = new QWidget(this);
     contentLayout->addWidget(rightWidget);
@@ -72,7 +67,8 @@ void MainWidget::initRight()
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
-
+    double width = this->width();
+    sidebarWidget->resize(width * 0.25, this->height());
 }
 
 MainWidget::~MainWidget() {}
