@@ -6,7 +6,7 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     : QWidget{parent}{
     mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(8, 8, 8, 8);
+    mainLayout->setContentsMargins(6, 6, 6, 6);
 
     titleBar = new TitleBar(this);
     mainLayout->addWidget(titleBar);
@@ -26,6 +26,8 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     this->setMouseTracking(true);
 
     this->setMaximumSize(wholeRect.width(), wholeRect.height());
+
+
 
 }
 
@@ -203,10 +205,11 @@ void FramelessWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setBrush(QBrush(QColor(200, 200, 200)));
+    painter.setBrush(QBrush(QColor(245, 245, 239))); // 2E = 32 + 14 = 46
     painter.setPen(Qt::transparent);
     QRect rect = this->rect();
     painter.drawRoundedRect(rect, 4, 4);
+    QWidget::paintEvent(event);
 
 }
 

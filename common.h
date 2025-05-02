@@ -20,6 +20,8 @@
 //页面布局
 
 #include <QWidget>
+#include <QFrame>
+#include <QScrollArea>
 #include <QPoint>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -44,6 +46,7 @@
 #include <QPropertyAnimation>
 
 namespace common {
+
     inline bool loadFont(const QString& fontPath){ //加载字体
         int loadFontId = QFontDatabase::addApplicationFont(fontPath);
         if(loadFontId == -1){
@@ -57,7 +60,8 @@ namespace common {
         qDebug() << fontFamliy.at(0);
         return true;
 
-}
+    }
+    inline QFont vonwaoFont = QFont("VonwaonBitmap 16px", 16);
 }
 
 #endif // COMMON_H

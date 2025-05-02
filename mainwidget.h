@@ -15,8 +15,9 @@ class MainWidget : public FramelessWidget
 private:
     QWidget *sidebarWidget, *rightWidget;
     QVBoxLayout* sidebarLayout, *rightLayout;
+    QScrollArea* funcArea; //可滚动的功能区域
     QLabel *sideTitle;
-    QButtonGroup *sidebarButtons;
+    QButtonGroup *stackButtonGroup;
     QPushButton *exploreButton, *localMusicButton;
     QStackedWidget* funcWidget;
     ExploreWidget *exploreWidget;
@@ -31,6 +32,8 @@ private:
     void initRight();
 protected:
     void resizeEvent(QResizeEvent* event);
+private slots:
+    void onStackButtonClicked();
 
 public:
     MainWidget(QWidget *parent = nullptr);
