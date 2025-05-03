@@ -1,5 +1,4 @@
-QT       += core gui
-
+QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -33,3 +32,5 @@ RESOURCES += \
 
 FORMS +=
 
+INCLUDEPATH += $$PWD/musicItem
+include($$PWD/musicItem/musicItemMoudle.pri)

@@ -40,10 +40,16 @@
 #include <QPainterPath>
 #include <QFontDatabase>
 
-
 #include <QApplication>
-
 #include <QPropertyAnimation>
+
+//结构体
+#include <QVector>
+
+//网络
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 namespace common {
 

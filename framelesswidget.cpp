@@ -210,7 +210,6 @@ void FramelessWidget::paintEvent(QPaintEvent *event)
     QRect rect = this->rect();
     painter.drawRoundedRect(rect, 4, 4);
     QWidget::paintEvent(event);
-
 }
 
 void FramelessWidget::changeEvent(QEvent *event)
