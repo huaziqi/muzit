@@ -2,9 +2,13 @@
 #define EXPLOREWIDGET_H
 
 #include "common.h"
+#include "musicitem.h"
+
 
 struct WeeklyInfo{
-    int ID, period, time;
+    int ID; // list_id
+    int period; //期号
+    int time; //发布时间戳
 };
 
 class ExploreWidget : public QWidget
@@ -14,23 +18,32 @@ public:
     explicit ExploreWidget(QWidget *parent = nullptr);
 private:
     QNetworkAccessManager *manager;
-    QNetworkRequest *weeklyIdRequest;
-    QNetworkReply *weeklyIdReply;
-
     QVBoxLayout *mainLayout;
     QFont mainFont;
 
-
+    QNetworkRequest *weeklyIdRequest;
+    QNetworkReply *weeklyIdReply;
     QFrame* weeklyMusicWidget;
     QVBoxLayout *weeklyMusicLayout; //每周音乐榜
     QHBoxLayout *weeklyMusicTopLayout; //顶部布局
     QLabel* weeklyInfoLabel;
+    QMenu* chooseWeekMenu;
     QVector<WeeklyInfo> weeklyIdVector;
+    int currentWeekId = -1;
+//每周音乐部分控件
+    QNetworkRequest *currentRankRequest;
+    QNetworkReply *currentRankReply;
+    QVector<MusicItem*> currentRankSongs;
+    QScrollArea* currentWeekSongsArea;
+    QWidget* currentWeekSongsWidget;
+    QHBoxLayout* currentWeekSongsLayout;
 
 private:
     //初始化函数
     void initWeeklyMusic();
+    void initCurrentWeekMusic();
     void getWeeklyHTMLInfo();
+    void getCurrentWeekRank();
 signals:
 };
 

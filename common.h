@@ -2,8 +2,6 @@
 #define COMMON_H
 
 
-
-
 #include <QCoreApplication>
 //文件处理
 #include <QFile>
@@ -18,7 +16,7 @@
 #include <QtMath>
 
 //页面布局
-
+#include <QMenu>
 #include <QWidget>
 #include <QFrame>
 #include <QScrollArea>
@@ -52,6 +50,16 @@
 #include <QNetworkReply>
 
 namespace common {
+    struct SongInfo{
+        int rank;
+        int playedNum, duration; //播放量和持续时间
+        QString BVId;
+        QString title, author;
+        QString coverUrl;
+
+        SongInfo(int _rank, int _playedNum, int _duration, QString _BVId, QString _title, QString _author, QString _coverUrl)\
+            : rank(_rank), playedNum(_playedNum), duration(_duration), BVId(_BVId), title(_title), author(_author), coverUrl(_coverUrl){}
+    };
 
     inline bool loadFont(const QString& fontPath){ //加载字体
         int loadFontId = QFontDatabase::addApplicationFont(fontPath);

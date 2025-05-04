@@ -100,4 +100,30 @@ void TitleBar::onButtonClicked()
 
 }
 
+void TitleBar::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        isMousePressed = true;
+        mouseStartPoint = event->globalPosition().toPoint();
+        windowStartPoint = this->window()->frameGeometry().topLeft();
+    }
+    QWidget::mousePressEvent(event);
+}
+
+void TitleBar::mouseMoveEvent(QMouseEvent *event)
+{
+    if (isMousePressed) {
+        QPoint offset = event->globalPosition().toPoint() - mouseStartPoint;
+        this->window()->move(windowStartPoint + offset);
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
+void TitleBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        isMousePressed = false;
+    }
+    QWidget::mouseReleaseEvent(event);
+}
 

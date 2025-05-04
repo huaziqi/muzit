@@ -24,7 +24,6 @@ private:
     LocalWidget *localWidget;
 
     PlayerWidget* playerWidget;
-
     QFont *sideBarFont;
 
 private:

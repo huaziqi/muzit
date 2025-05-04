@@ -115,6 +115,12 @@ bool FramelessWidget::eventFilter(QObject *watched, QEvent *event)
 
 void FramelessWidget::mousePressEvent(QMouseEvent *event){
 
+    QWidget *child = childAt(event->pos());
+
+    if (child && (qobject_cast<QLabel*>(child) || child->inherits("QAbstractButton") || child->focusPolicy() != Qt::NoFocus)) {
+        event->ignore();
+        return;
+    }
     switch(event->button()){
     case Qt::LeftButton:
         if(location == CENTER)

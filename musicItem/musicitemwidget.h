@@ -1,14 +1,21 @@
 #ifndef MUSICITEMWIDGET_H
 #define MUSICITEMWIDGET_H
 
-#include <QWidget>
+#include "common.h"
+#include "musicitem.h"
 
 class MusicItemWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MusicItemWidget(QWidget *parent = nullptr);
+    explicit MusicItemWidget(MusicItem* _musicItem, QWidget *parent = nullptr);
+private:
+    QHBoxLayout* mainLayout;
+    MusicItem *musicItem;
 
+    QNetworkAccessManager *manager;
+    QNetworkRequest* coverRequest;
+    QNetworkReply* coverReply;
 signals:
 };
 
