@@ -16,6 +16,8 @@ private:
     QNetworkAccessManager *manager;
     QNetworkRequest* coverRequest;
     QNetworkReply* coverReply;
+private:
+    void gotCover();
 signals:
 };
 

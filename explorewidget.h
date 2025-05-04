@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "musicitem.h"
+#include "musicitemwidget.h"
 
 
 struct WeeklyInfo{

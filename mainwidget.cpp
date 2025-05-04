@@ -4,6 +4,7 @@
 
 MainWidget::MainWidget(QWidget *parent)
     : FramelessWidget(parent){
+
     Config config;
     config.readConfig();
     common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");

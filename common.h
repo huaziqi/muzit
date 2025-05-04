@@ -5,9 +5,11 @@
 #include <QCoreApplication>
 //文件处理
 #include <QFile>
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QStandardPaths>
 //事件处理
 #include <QMouseEvent>
 #include <QResizeEvent>
@@ -30,7 +32,6 @@
 #include <QButtonGroup>
 #include <QLabel>
 
-
 //UI
 #include <QPainter>
 #include <QColor>
@@ -50,16 +51,17 @@
 #include <QNetworkReply>
 
 namespace common {
-    struct SongInfo{
-        int rank;
-        int playedNum, duration; //播放量和持续时间
-        QString BVId;
-        QString title, author;
-        QString coverUrl;
+    // struct SongInfo{
+    //     int rank;
+    //     int playedNum, duration; //播放量和持续时间
+    //     QString BVId;
+    //     QString title, author;
+    //     QString coverUrl;
 
-        SongInfo(int _rank, int _playedNum, int _duration, QString _BVId, QString _title, QString _author, QString _coverUrl)\
-            : rank(_rank), playedNum(_playedNum), duration(_duration), BVId(_BVId), title(_title), author(_author), coverUrl(_coverUrl){}
-    };
+    //     SongInfo(int _rank, int _playedNum, int _duration, QString _BVId, QString _title, QString _author, QString _coverUrl)\
+    //         : rank(_rank), playedNum(_playedNum), duration(_duration), BVId(_BVId), title(_title), author(_author), coverUrl(_coverUrl){}
+    // };
+    inline QString cachePath= QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 
     inline bool loadFont(const QString& fontPath){ //加载字体
         int loadFontId = QFontDatabase::addApplicationFont(fontPath);

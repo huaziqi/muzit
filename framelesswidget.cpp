@@ -24,11 +24,7 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     this->setAttribute(Qt::WA_TranslucentBackground); //启用透明背景
     this->setMouseTracking(true);
-
     this->setMaximumSize(wholeRect.width(), wholeRect.height());
-
-
-
 }
 
 FramelessWidget::~FramelessWidget()

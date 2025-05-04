@@ -29,6 +29,7 @@ void Config::readConfig()
 {
     QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     QString configPath = configDir + "/config.json";
+    qDebug() << configPath;
     QFile configFile = QFile(configPath);
     if(configFile.exists())
         qDebug() << "";

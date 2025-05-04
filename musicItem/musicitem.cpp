@@ -7,6 +7,14 @@ MusicItem::MusicItem(QString _BVId, QString _title, QString _author, QString _co
 
 }
 
+void MusicItem::setWidget(MusicItemWidget *widget){
+    this->widget = widget;
+}
+
+MusicItemWidget *MusicItem::getWidget(){
+    return this->widget;
+}
+
 void MusicItem::output()
 {
     qDebug() << BVId << " " << author << " " << title << " " << coverUrl << " " << playedNum << " " << duration << " " << rank;
