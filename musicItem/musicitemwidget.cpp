@@ -6,12 +6,17 @@ MusicItemWidget::MusicItemWidget(MusicItem* _musicItem, QWidget *parent)
     musicItem = _musicItem;
     musicItem->setWidget(this);
     mainLayout = new QHBoxLayout();
+    this->setLayout(mainLayout);
     manager = new QNetworkAccessManager;
     this->setFixedHeight(200);
-    this->setFixedWidth(300);
+    this->setFixedWidth(400);
     this->setAttribute(Qt::WA_StyledBackground);
-    this->setStyleSheet("background-color: black;");
+    this->setStyleSheet("background-color: #dddddd;");
     gotCover();
+}
+
+MusicItemWidget::~MusicItemWidget(){
+
 }
 
 void MusicItemWidget::gotCover()
@@ -34,13 +39,30 @@ void MusicItemWidget::gotCover()
             return;
         }
         QString fileName = dirPath + "/" + QCryptographicHash::hash(musicItem->coverUrl.toUtf8(), QCryptographicHash::Md5).toHex();
+        coverFileName = fileName;
+
         QFile coverFile(fileName);
         if(!coverFile.exists()){
-            qDebug() << 1;
             if(coverFile.open(QIODeviceBase::WriteOnly)){
                 coverFile.write(coverReply->readAll());
             }
         }
-
+        initLayout();
     });
+}
+
+void MusicItemWidget::initLayout(){
+    coverLabel = new QLabel();
+    coverPixMap = QPixmap(coverFileName);
+    coverPixMap = coverPixMap.scaled(300, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    mainLayout->addWidget(coverLabel);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    QPainter painter(&coverPixMap);
+    int duration = musicItem->duration;
+    auto durationString = [](const int& duration){
+
+    };
+
+    coverLabel->setPixmap(coverPixMap);
 }

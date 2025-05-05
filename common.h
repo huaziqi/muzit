@@ -33,6 +33,7 @@
 #include <QLabel>
 
 //UI
+#include <QPixmap>
 #include <QPainter>
 #include <QColor>
 #include <QIcon>
