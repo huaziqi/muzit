@@ -18,6 +18,7 @@ class ExploreWidget : public QWidget
 public:
     explicit ExploreWidget(QWidget *parent = nullptr);
 private:
+
     QNetworkAccessManager *manager;
     QVBoxLayout *mainLayout;
     QFont mainFont;
@@ -25,6 +26,8 @@ private:
     QNetworkRequest *weeklyIdRequest;
     QNetworkReply *weeklyIdReply;
     QFrame* weeklyMusicWidget;
+
+    int minWeeklyMusicLayoutHeight, maxWeeklyMusicLayoutHeight;
     QVBoxLayout *weeklyMusicLayout; //每周音乐榜
     QHBoxLayout *weeklyMusicTopLayout; //顶部布局
     QLabel* weeklyInfoLabel;
@@ -38,6 +41,9 @@ private:
     QScrollArea* currentWeekSongsArea;
     QWidget* currentWeekSongsWidget;
     QHBoxLayout* currentWeekSongsLayout;
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     //初始化函数

@@ -18,7 +18,6 @@ MainWidget::MainWidget(QWidget *parent)
 }
 
 
-
 void MainWidget::initSidebar()
 {
     sidebarWidget = new QWidget(this);
@@ -62,30 +61,40 @@ void MainWidget::initSidebar()
     sidebarLayout->addStretch(1);
 }
 
-
-
 void MainWidget::initRight()
 {
+    //布局设置
     rightLayout = new QVBoxLayout();
-    funcArea = new QScrollArea();
-    rightLayout->addWidget(funcArea);
     rightLayout->setContentsMargins(0, 0, 0, 0);
     rightLayout->setSpacing(0);
+    //widget设置
     rightWidget = new QWidget(this);
     contentLayout->addWidget(rightWidget);
     rightWidget->setLayout(rightLayout);
-
-
+    //初始化widget
     funcWidget = new QStackedWidget();
     exploreWidget = new ExploreWidget();
-    funcWidget->addWidget(exploreWidget);
     localWidget = new LocalWidget();
+
+    //添加到StackedWidget
+    funcWidget->addWidget(exploreWidget);
     funcWidget->addWidget(localWidget);
     funcWidget->setCurrentIndex(0);
     exploreButton->setChecked(true);
-    playerWidget = new PlayerWidget();
-    rightLayout->addWidget(funcArea);
+
+    //设置funcArea
+
+    funcArea = new QScrollArea();
+    funcArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    funcArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     funcArea->setWidget(funcWidget);
+    funcArea->setWidgetResizable(true);//
+    funcArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    rightLayout->addWidget(funcArea);
+
+    //添加播放器
+    playerWidget = new PlayerWidget();
     rightLayout->addWidget(playerWidget);
 }
 

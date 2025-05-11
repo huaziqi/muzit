@@ -25,6 +25,31 @@ FramelessWidget::FramelessWidget(QWidget *parent)
     this->setAttribute(Qt::WA_TranslucentBackground); //启用透明背景
     this->setMouseTracking(true);
     this->setMaximumSize(wholeRect.width(), wholeRect.height());
+
+    //定时检查cursor形状
+    // QTimer *cursorTimer = new QTimer(this);
+    // cursorTimer->setInterval(500);
+    // cursorTimer->start();
+    // connect(cursorTimer, &QTimer::timeout, [=]{
+    //     qDebug() << lastPressed;
+    //     QPoint globalPos = QCursor::pos();
+    //     QPoint localPos = this->mapFromGlobal(globalPos);
+    //     if(!lastPressed){
+    //         qDebug() << location << " " << setCursorShape(QCursor::pos()) << " " << this->rect().contains(localPos) ;
+    //     }
+    //     if(!lastPressed && location != CENTER && setCursorShape(QCursor::pos()) && this->rect().contains(localPos) ){
+    //         pntMouseOffSet = QCursor::pos() - this->frameGeometry().topLeft();
+    //         location = CENTER;
+    //         setCursor(Qt::ArrowCursor);
+    //     }
+    //     qDebug() << bIsLeftPressed << " " << location << " " << this->rect().contains(localPos);
+    //     if(!bIsLeftPressed && location != CENTER  && this->rect().contains(QCursor::pos())){ // 第一次没有点击，并且location不是CENTER，而且不在窗口外, 保持半秒
+    //         lastPressed = false;
+    //     }
+    //     else{
+    //         lastPressed = true;
+    //     }
+    // });
 }
 
 FramelessWidget::~FramelessWidget()
@@ -47,9 +72,9 @@ void FramelessWidget::titleBarEvent(const QString &signal)
     }
 }
 
-void FramelessWidget::setCursorShape(const QPoint &point)
+bool FramelessWidget::setCursorShape(const QPoint &point)
 {
-
+    bool inCenter = false;
     QPoint topLeft = mapToGlobal(rectMain.topLeft());
     QPoint bottomRight = mapToGlobal(rectMain.bottomRight());
     int x = point.x(), y = point.y();
@@ -70,7 +95,8 @@ void FramelessWidget::setCursorShape(const QPoint &point)
     else if(x >= topLeft.x() && x <= topLeft.x() + PADDING && y >= topLeft.y() + PADDING && y <= bottomRight.y() - PADDING)
         location = LEFT, this->setCursor(Qt::SizeHorCursor);
     else
-        location = CENTER, this->setCursor(Qt::ArrowCursor);
+        location = CENTER, this->setCursor(Qt::ArrowCursor), inCenter = true;
+    return inCenter;
 }
 
 void FramelessWidget::showMinimized()
@@ -121,7 +147,13 @@ void FramelessWidget::mousePressEvent(QMouseEvent *event){
     case Qt::LeftButton:
         if(location == CENTER)
             pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
+        else if(setCursorShape(event->globalPosition().toPoint())){
+            location = CENTER;
+            this->setCursor(Qt::ArrowCursor);
+            pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
+        }
         bIsLeftPressed = true;
+
         break;
     }
 }
@@ -190,15 +222,15 @@ void FramelessWidget::mouseMoveEvent(QMouseEvent *event){
             reMove.setX(mousePoint.x());
         break;
     }
-    if(!hasRecordedFRect)
-        lastRect = reMove, hasRecordedFRect = true;
-    if(std::abs(lastRect.width() - reMove.width()) > 100 || std::abs(lastRect.height() - reMove.height()) > 100){
-        location = CENTER;
-        this->setCursor(Qt::ArrowCursor);
-        hasRecordedFRect = false;
-        pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
-        return;
-    }
+    // if(!hasRecordedFRect) //假如没有记录最开始的矩阵
+    //     lastRect = reMove, hasRecordedFRect = true;
+    // if(std::abs(lastRect.width() - reMove.width()) > 1000 || std::abs(lastRect.height() - reMove.height()) > 1000){
+
+    //         location = CENTER;
+    //         this->setCursor(Qt::ArrowCursor);
+    //         pntMouseOffSet = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
+    //         return;
+    // }
     this->setGeometry(reMove);
     lastRect = reMove;
 }

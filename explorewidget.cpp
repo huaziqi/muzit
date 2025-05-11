@@ -1,21 +1,32 @@
 #include "explorewidget.h"
 
 ExploreWidget::ExploreWidget(QWidget *parent)
-    : QWidget{parent}
-{
+    : QWidget{parent}{
     mainLayout = new QVBoxLayout();
     this->setLayout(mainLayout);
+    mainLayout->setAlignment(Qt::AlignTop);
+
+    minWeeklyMusicLayoutHeight = 200, maxWeeklyMusicLayoutHeight = 350;
+
     manager = new QNetworkAccessManager();
     mainFont = common::vonwaoFont;
     initWeeklyMusic();
-
+    mainLayout->addStretch(1);
 }
-void ExploreWidget::initWeeklyMusic()
-{
+
+void ExploreWidget::resizeEvent(QResizeEvent *event){
+    int height = qMin(maxWeeklyMusicLayoutHeight, qMax(minWeeklyMusicLayoutHeight, this->width() / 3));
+    weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right()- mainLayout->contentsMargins().left(), height);
+    QWidget::resizeEvent(event);
+}
+
+void ExploreWidget::initWeeklyMusic(){
 //初始化整体布局
     weeklyMusicWidget = new QFrame(this);
-    weeklyMusicWidget->setMinimumHeight(300);
-    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().right() * 2- mainLayout->contentsMargins().left() * 2);
+    weeklyMusicWidget->setMinimumHeight(minWeeklyMusicLayoutHeight);
+    weeklyMusicWidget->setMaximumHeight(maxWeeklyMusicLayoutHeight);
+    int height = qMin(maxWeeklyMusicLayoutHeight, qMax(minWeeklyMusicLayoutHeight, this->width() / 3));
+    weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right() * 2- mainLayout->contentsMargins().left() * 2, height);
     weeklyMusicWidget->setFrameShape(QFrame::Box);
     mainLayout->addWidget(weeklyMusicWidget);
     weeklyMusicLayout = new QVBoxLayout();
@@ -26,7 +37,6 @@ void ExploreWidget::initWeeklyMusic()
     weeklyMusicLayout->addLayout(weeklyMusicTopLayout);
     weeklyMusicLayout->setContentsMargins(0, 0, 0, 0);
     weeklyMusicLayout->setSpacing(0);
-    weeklyMusicLayout->addStretch(1);
 //初始化label
     weeklyInfoLabel = new QLabel("<a href = \"https://music.bilibili.com/pc/rank\">bilibili音乐榜</a>");
     weeklyInfoLabel->setOpenExternalLinks(true);
@@ -42,14 +52,14 @@ void ExploreWidget::initWeeklyMusic()
 
 }
 
-void ExploreWidget::initCurrentWeekMusic()
-{
+void ExploreWidget::initCurrentWeekMusic(){
+    //初始化
     currentWeekSongsWidget = new QWidget();
     currentWeekSongsLayout = new QHBoxLayout();
-    currentWeekSongsWidget->setLayout(currentWeekSongsLayout);
     currentWeekSongsArea = new QScrollArea();
+
+    currentWeekSongsWidget->setLayout(currentWeekSongsLayout);
     currentWeekSongsArea->setWidget(currentWeekSongsWidget);
-    currentWeekSongsArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     currentWeekSongsArea->setWidgetResizable(true);
     currentWeekSongsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     currentWeekSongsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -61,8 +71,7 @@ void ExploreWidget::initCurrentWeekMusic()
 
 }
 
-void ExploreWidget::getWeeklyHTMLInfo()
-{
+void ExploreWidget::getWeeklyHTMLInfo(){
     weeklyIdRequest = new QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period?list_type=1")); //获取所有的list_id
 
     weeklyIdReply = manager->get(*weeklyIdRequest);

@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QLabel>
+#include <QTimer>
 
 //UI
 #include <QPixmap>

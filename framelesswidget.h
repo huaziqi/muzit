@@ -28,6 +28,7 @@ private:
     QRect lastRect;//为了防止突然变形
     bool hasRecordedFRect = false;
     bool maxied = false, bIsLeftPressed = false;
+    bool lastPressed = false;//检测鼠标形状
 protected:
     QVBoxLayout* mainLayout;
     QHBoxLayout* contentLayout;
@@ -42,7 +43,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void changeEvent(QEvent *event) override;
 public:
-    void setCursorShape(const QPoint& point);
+    bool setCursorShape(const QPoint& point);
     explicit FramelessWidget(QWidget *parent = nullptr);
     ~FramelessWidget();
 
