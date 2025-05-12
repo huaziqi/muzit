@@ -9,8 +9,7 @@ MainWidget::MainWidget(QWidget *parent)
     config.readConfig();
     common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");
     titleBar->setTitle("Muzit");
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-    this->setMinimumSize(QSize(400, 300));
+    this->setMinimumSize(QSize(600, 500));
     this->resize(800, 600);
     sideBarFont = new QFont("VonwaonBitmap 16px", 16);
     initSidebar();
@@ -88,7 +87,8 @@ void MainWidget::initRight()
     funcArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     funcArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     funcArea->setWidget(funcWidget);
-    funcArea->setWidgetResizable(true);//
+    funcWidget->setFixedWidth(funcArea->width());
+    funcArea->setWidgetResizable(true); //
     funcArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     rightLayout->addWidget(funcArea);
@@ -100,6 +100,9 @@ void MainWidget::initRight()
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
+    QWidget::resizeEvent(event);
+
+    funcWidget->setFixedWidth(funcArea->width());
 
 
 }

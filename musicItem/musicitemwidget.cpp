@@ -1,16 +1,14 @@
 #include "musicitemwidget.h"
 
 MusicItemWidget::MusicItemWidget(MusicItem* _musicItem, QWidget *parent)
-    : QWidget{parent}, minWidth(300), maxWidth(500)
+    : QWidget{parent}, pixMinWidth(300), pixMaxWidth(500)
 {
     musicItem = _musicItem;
     musicItem->setWidget(this);
-    mainLayout = new QHBoxLayout();
-    this->setLayout(mainLayout);
+    mainLayout = new QHBoxLayout(this);
     manager = new QNetworkAccessManager;
-    this->resize(400, 200);
     this->setAttribute(Qt::WA_StyledBackground);
-    this->setStyleSheet("background-color: #dddddd;");
+    //this->setStyleSheet("background-color: #000000;");
     gotCover();
 }
 
@@ -20,13 +18,15 @@ MusicItemWidget::~MusicItemWidget(){
 
 void MusicItemWidget::resizeEvent(QResizeEvent *event){
     int parentWidth = this->parentWidget()->parentWidget()->width();
-    int width = qMin(maxWidth, qMax(minWidth, parentWidth / 4));
-    this->resize(width, width / 2);
+
+    int lineLabelNum = common::getColumn(parentWidth);
+    int pixWidth = (parentWidth - 200 * lineLabelNum) / lineLabelNum;
+    this->resize(pixWidth + 200, pixWidth * aspectRadio);
     if(!coverPixMap.isNull()){
-        if(qAbs(lastWidth - width) / lastWidth > 0.1){
-            coverPixMap = originCoverPixmap.scaled(width, width / 2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        if(qAbs(lastWidth - pixWidth) > 15){
+            coverPixMap = originCoverPixmap.scaled(pixWidth, pixWidth * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             coverLabel->setPixmap(coverPixMap);
-            lastWidth = width;
+            lastWidth = pixWidth;
         }
     }
 }
@@ -50,13 +50,13 @@ void MusicItemWidget::gotCover()
             qDebug() << "创建失败";
             return;
         }
-        QString fileName = dirPath + "/" + QCryptographicHash::hash(musicItem->coverUrl.toUtf8(), QCryptographicHash::Md5).toHex();
-        coverFileName = fileName;
+        coverFileName = dirPath + "/" + QCryptographicHash::hash(musicItem->coverUrl.toUtf8(), QCryptographicHash::Md5).toHex();
 
-        QFile coverFile(fileName);
+        QFile coverFile(coverFileName);
         if(!coverFile.exists()){
             if(coverFile.open(QIODeviceBase::WriteOnly)){
                 coverFile.write(coverReply->readAll());
+                coverFile.close();
             }
         }
         initLayout();
@@ -65,8 +65,8 @@ void MusicItemWidget::gotCover()
 
 void MusicItemWidget::initLayout(){
     coverLabel = new QLabel();
-    coverPixMap = QPixmap(coverFileName).scaled(300, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    lastWidth = 300;
+    coverPixMap = QPixmap(coverFileName).scaled(200, 200 * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    lastWidth = 200;
     QPainter painter(&coverPixMap);
     painter.setRenderHint(QPainter::Antialiasing); //抗锯齿
 
@@ -109,10 +109,28 @@ void MusicItemWidget::initLayout(){
     painter.end();
 
     coverLabel->setPixmap(coverPixMap);
+    coverLabel->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
     originCoverPixmap = coverPixMap;
 
-    mainLayout->addWidget(coverLabel);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setAlignment(Qt::AlignLeft);
+    mainLayout->addWidget(coverLabel, 1);
+
+    infoWidget = new QWidget();
+    infoWidget->setFixedWidth(200);
+    mainLayout->addWidget(infoWidget);
+    initInfo();
+}
+
+void MusicItemWidget::initInfo()
+{
+    infoLayout = new QVBoxLayout(infoWidget);
+    titleLabel = new QLabel(musicItem->title);
+    titleLabel->setFixedWidth(170);
+    titleLabel->setWordWrap(true);
+    authorLabel = new QLabel(musicItem->author);
+    playedNumLabel = new QLabel(QString::number(musicItem->playedNum));
+    infoLayout->addWidget(titleLabel);
+    infoLayout->addStretch(5);
+    infoLayout->addWidget(authorLabel);
+    infoLayout->addWidget(playedNumLabel);
 }
 

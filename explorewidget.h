@@ -27,7 +27,6 @@ private:
     QNetworkReply *weeklyIdReply;
     QFrame* weeklyMusicWidget;
 
-    int minWeeklyMusicLayoutHeight, maxWeeklyMusicLayoutHeight;
     QVBoxLayout *weeklyMusicLayout; //每周音乐榜
     QHBoxLayout *weeklyMusicTopLayout; //顶部布局
     QLabel* weeklyInfoLabel;
@@ -40,7 +39,9 @@ private:
     QVector<MusicItem*> currentRankSongs;
     QScrollArea* currentWeekSongsArea;
     QWidget* currentWeekSongsWidget;
-    QHBoxLayout* currentWeekSongsLayout;
+    QGridLayout* currentWeekSongsLayout;
+    int currentGridColumn = -1;
+    void rebuildGridLayout();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;

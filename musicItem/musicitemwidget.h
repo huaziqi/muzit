@@ -17,8 +17,13 @@ private:
     MusicItem *musicItem;
     QString coverFileName;
     QPixmap coverPixMap, originCoverPixmap;
-    int minWidth, maxWidth;
+    int pixMinWidth, pixMaxWidth;
     int lastWidth;
+    double aspectRadio = 0.56; //pixMap长宽比
+
+    QWidget* infoWidget; //右侧信息栏
+    QVBoxLayout *infoLayout;
+    QLabel* titleLabel, *authorLabel, * playedNumLabel;
 
     QNetworkAccessManager *manager;
     QNetworkRequest* coverRequest;
@@ -28,6 +33,7 @@ protected:
 private:
     void gotCover();
     void initLayout();
+    void initInfo();
     void drawPixMap(int width, int height);
 signals:
 };

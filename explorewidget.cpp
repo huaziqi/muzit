@@ -2,36 +2,73 @@
 
 ExploreWidget::ExploreWidget(QWidget *parent)
     : QWidget{parent}{
-    mainLayout = new QVBoxLayout();
-    this->setLayout(mainLayout);
+
+
+    mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop);
-
-    minWeeklyMusicLayoutHeight = 200, maxWeeklyMusicLayoutHeight = 350;
-
+    mainLayout->setContentsMargins(30, 0, 30, 0);
     manager = new QNetworkAccessManager();
     mainFont = common::vonwaoFont;
+
     initWeeklyMusic();
-    mainLayout->addStretch(1);
+    //this->setStyleSheet("border: 1px solid blue;");
 }
 
 void ExploreWidget::resizeEvent(QResizeEvent *event){
-    int height = qMin(maxWeeklyMusicLayoutHeight, qMax(minWeeklyMusicLayoutHeight, this->width() / 3));
-    weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right()- mainLayout->contentsMargins().left(), height);
     QWidget::resizeEvent(event);
+    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() * 2);
+
+    if(currentRankSongs.empty() | !weeklyMusicLayout)
+        return;
+
+    int column = common::getColumn(this->width());
+
+    if(column == currentGridColumn)
+        return;
+
+    currentGridColumn = column;
+    rebuildGridLayout();
+
+}
+void ExploreWidget::rebuildGridLayout()
+{
+    QLayoutItem* item;
+    while ((item = currentWeekSongsLayout->takeAt(0)) != nullptr) {
+        if (QWidget* widget = item->widget()) { //当item->widget是QWidget时进入if
+            currentWeekSongsLayout->removeWidget(widget);
+            widget->setParent(nullptr);
+        }
+        delete item;
+    }
+
+    // 重新按新的列数添加 widgets
+    for (int i = 0; i < currentRankSongs.count(); ++i) {
+        auto widget = new MusicItemWidget(currentRankSongs[i]);
+        int line = i % currentGridColumn;
+        if(currentGridColumn == 1)
+            line = 0;
+        currentWeekSongsLayout->addWidget(widget, i / currentGridColumn, line);
+    }
+
+    currentWeekSongsWidget->adjustSize();
+    weeklyMusicWidget->adjustSize();
 }
 
+
 void ExploreWidget::initWeeklyMusic(){
-//初始化整体布局
+    //初始化weeklywidget
     weeklyMusicWidget = new QFrame(this);
-    weeklyMusicWidget->setMinimumHeight(minWeeklyMusicLayoutHeight);
-    weeklyMusicWidget->setMaximumHeight(maxWeeklyMusicLayoutHeight);
-    int height = qMin(maxWeeklyMusicLayoutHeight, qMax(minWeeklyMusicLayoutHeight, this->width() / 3));
-    weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right() * 2- mainLayout->contentsMargins().left() * 2, height);
+    weeklyMusicWidget->setMaximumHeight(400);
+    //weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right() * 2- mainLayout->contentsMargins().left() * 2, this->height());
+    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() * 2);
+    weeklyMusicWidget->setMinimumHeight(200);
     weeklyMusicWidget->setFrameShape(QFrame::Box);
     mainLayout->addWidget(weeklyMusicWidget);
-    weeklyMusicLayout = new QVBoxLayout();
-    weeklyMusicLayout->setSpacing(10);
-    weeklyMusicWidget->setLayout(weeklyMusicLayout);
+
+    weeklyMusicLayout = new QVBoxLayout(weeklyMusicWidget);
+    weeklyMusicLayout->setSpacing(0);
+    weeklyMusicWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
 //初始化顶部
     weeklyMusicTopLayout = new QHBoxLayout();
     weeklyMusicLayout->addLayout(weeklyMusicTopLayout);
@@ -55,20 +92,24 @@ void ExploreWidget::initWeeklyMusic(){
 void ExploreWidget::initCurrentWeekMusic(){
     //初始化
     currentWeekSongsWidget = new QWidget();
-    currentWeekSongsLayout = new QHBoxLayout();
+    currentWeekSongsLayout = new QGridLayout(currentWeekSongsWidget);
     currentWeekSongsArea = new QScrollArea();
-
-    currentWeekSongsWidget->setLayout(currentWeekSongsLayout);
     currentWeekSongsArea->setWidget(currentWeekSongsWidget);
+
+    currentWeekSongsArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     currentWeekSongsArea->setWidgetResizable(true);
     currentWeekSongsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     currentWeekSongsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    weeklyMusicLayout->addWidget(currentWeekSongsArea);
-    for(int i = 0; i < currentRankSongs.count(); i ++){
-        currentWeekSongsLayout->addWidget(new MusicItemWidget(currentRankSongs[i]));
-    }
+    weeklyMusicLayout->addWidget(currentWeekSongsArea, 1);
+    currentWeekSongsLayout->setSpacing(10);
 
+    currentGridColumn = common::getColumn(this->width());
+    rebuildGridLayout();
+
+
+    currentWeekSongsWidget->adjustSize();
+    weeklyMusicWidget->adjustSize();
 }
 
 void ExploreWidget::getWeeklyHTMLInfo(){

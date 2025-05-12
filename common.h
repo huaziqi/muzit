@@ -25,6 +25,7 @@
 #include <QPoint>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGridLayout>
 
 //控件
 #include <QStackedWidget>
@@ -65,6 +66,16 @@ namespace common {
     // };
     inline QString cachePath= QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 
+    inline int getColumn(int width){
+        int column = 3;
+
+        if(width < 1400)
+            column = 2;
+        if(width < 700)
+            column = 1;
+        return column;
+    };
+
     inline bool loadFont(const QString& fontPath){ //加载字体
         int loadFontId = QFontDatabase::addApplicationFont(fontPath);
         if(loadFontId == -1){
@@ -77,7 +88,6 @@ namespace common {
         }
         qDebug() << fontFamliy.at(0);
         return true;
-
     }
     inline QFont vonwaoFont = QFont("VonwaonBitmap 16px", 16);
 }
