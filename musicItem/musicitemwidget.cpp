@@ -1,13 +1,20 @@
 #include "musicitemwidget.h"
 
 MusicItemWidget::MusicItemWidget(MusicItem* _musicItem, QWidget *parent)
-    : QWidget{parent}, pixMinWidth(300), pixMaxWidth(500)
+    : QWidget{parent}, infoMinHeight(110)
 {
+    this->setAttribute(Qt::WA_StyledBackground);
+
+    labelFont = common::vonwaoFont;
+    labelFont.setPixelSize(10);
+
     musicItem = _musicItem;
     musicItem->setWidget(this);
     mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(5, 5, 5, 0);
+
     manager = new QNetworkAccessManager;
-    this->setAttribute(Qt::WA_StyledBackground);
+
     //this->setStyleSheet("background-color: #000000;");
     gotCover();
 }
@@ -17,18 +24,25 @@ MusicItemWidget::~MusicItemWidget(){
 }
 
 void MusicItemWidget::resizeEvent(QResizeEvent *event){
+    QWidget::resizeEvent(event);
+
     int parentWidth = this->parentWidget()->parentWidget()->width();
+    // qDebug() << this->parentWidget()->parentWidget()->parentWidget();
 
     int lineLabelNum = common::getColumn(parentWidth);
-    int pixWidth = (parentWidth - 200 * lineLabelNum) / lineLabelNum;
-    this->resize(pixWidth + 200, pixWidth * aspectRadio);
+    // qDebug() << "in music item:" << parentWidth;
+    int pixWidth = parentWidth / lineLabelNum - 200;
+    this->resize(pixWidth + 200, qMax(infoMinHeight, static_cast<int>(pixWidth * aspectRadio)));
     if(!coverPixMap.isNull()){
-        if(qAbs(lastWidth - pixWidth) > 15){
+        if(qAbs(lastWidth - pixWidth) > 8){
             coverPixMap = originCoverPixmap.scaled(pixWidth, pixWidth * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             coverLabel->setPixmap(coverPixMap);
             lastWidth = pixWidth;
         }
     }
+    // qDebug() << parentWidth;
+    // qDebug() << "resized: " << this->width() <<" " << pixWidth;
+    // qDebug() << "";
 }
 
 void MusicItemWidget::gotCover()
@@ -65,7 +79,7 @@ void MusicItemWidget::gotCover()
 
 void MusicItemWidget::initLayout(){
     coverLabel = new QLabel();
-    coverPixMap = QPixmap(coverFileName).scaled(200, 200 * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    coverPixMap = QPixmap(coverFileName).scaled(197, 197 * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     lastWidth = 200;
     QPainter painter(&coverPixMap);
     painter.setRenderHint(QPainter::Antialiasing); //抗锯齿
@@ -118,16 +132,23 @@ void MusicItemWidget::initLayout(){
     infoWidget->setFixedWidth(200);
     mainLayout->addWidget(infoWidget);
     initInfo();
+
 }
 
 void MusicItemWidget::initInfo()
 {
     infoLayout = new QVBoxLayout(infoWidget);
+    infoLayout->setSpacing(2);
+    infoLayout->setContentsMargins(0, 10, 0, 5);
+
     titleLabel = new QLabel(musicItem->title);
     titleLabel->setFixedWidth(170);
     titleLabel->setWordWrap(true);
     authorLabel = new QLabel(musicItem->author);
+    authorLabel->setMargin(0);
     playedNumLabel = new QLabel(QString::number(musicItem->playedNum));
+    playedNumLabel->setMargin(0);
+
     infoLayout->addWidget(titleLabel);
     infoLayout->addStretch(5);
     infoLayout->addWidget(authorLabel);

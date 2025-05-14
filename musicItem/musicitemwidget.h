@@ -18,12 +18,14 @@ private:
     QString coverFileName;
     QPixmap coverPixMap, originCoverPixmap;
     int pixMinWidth, pixMaxWidth;
+    int infoMinHeight;
     int lastWidth;
-    double aspectRadio = 0.56; //pixMap长宽比
+    double aspectRadio = 0.55; //pixMap长宽比
 
     QWidget* infoWidget; //右侧信息栏
     QVBoxLayout *infoLayout;
     QLabel* titleLabel, *authorLabel, * playedNumLabel;
+    QFont labelFont;
 
     QNetworkAccessManager *manager;
     QNetworkRequest* coverRequest;

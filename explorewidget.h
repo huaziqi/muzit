@@ -31,7 +31,10 @@ private:
     QHBoxLayout *weeklyMusicTopLayout; //顶部布局
     QLabel* weeklyInfoLabel;
     QMenu* chooseWeekMenu;
-    QVector<WeeklyInfo> weeklyIdVector;
+    QScrollArea *chooseWeekArea;
+    QPushButton* chooseWeekBtn;
+    QVector<WeeklyInfo> weeklyIdVector; //每周id信息数组
+    QVector<QAction*> weeklyActionVector; //每周的action数组
     int currentWeekId = -1;
 //每周音乐部分控件
     QNetworkRequest *currentRankRequest;
@@ -42,12 +45,14 @@ private:
     QGridLayout* currentWeekSongsLayout;
     int currentGridColumn = -1;
     void rebuildGridLayout();
+    bool weeklyMusicLayoutInited = false;//判断是否初始化过了
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
     //初始化函数
+    void initWeeklyMenu(); //初始化每周菜单
     void initWeeklyMusic();
     void initCurrentWeekMusic();
     void getWeeklyHTMLInfo();

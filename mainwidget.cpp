@@ -9,11 +9,12 @@ MainWidget::MainWidget(QWidget *parent)
     config.readConfig();
     common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");
     titleBar->setTitle("Muzit");
-    this->setMinimumSize(QSize(600, 500));
-    this->resize(800, 600);
+    this->setMinimumSize(QSize(800, 600));
+
     sideBarFont = new QFont("VonwaonBitmap 16px", 16);
     initSidebar();
     initRight();
+    this->resize(800, 600);
 }
 
 
@@ -21,17 +22,17 @@ void MainWidget::initSidebar()
 {
     sidebarWidget = new QWidget(this);
     sidebarWidget->setStyleSheet("background-color: #e0e0e0");
-    sidebarLayout = new QVBoxLayout();
+    sidebarWidget->setFixedWidth(200);
+    contentLayout->addWidget(sidebarWidget);
+    sidebarLayout = new QVBoxLayout(sidebarWidget);
     sidebarLayout->setContentsMargins(2, 20, 2, 0);
     sidebarLayout->setSpacing(10);
-    sidebarWidget->setLayout(sidebarLayout);
-    sidebarWidget->setFixedWidth(200);
-
-    contentLayout->addWidget(sidebarWidget);
-    sideTitle = new QLabel(this);
-    sideTitle->setAlignment(Qt::AlignCenter);
     sidebarLayout->setAlignment(Qt::AlignTop);
     sidebarLayout->setAlignment(Qt::AlignHCenter);
+
+
+    sideTitle = new QLabel(this);
+    sideTitle->setAlignment(Qt::AlignCenter);
     sideTitle->setText("Muzit");
     sideTitle->setFont(*sideBarFont);
     sidebarLayout->addWidget(sideTitle);
@@ -52,6 +53,7 @@ void MainWidget::initSidebar()
     stackButtonGroup->addButton(exploreButton, 0);
     stackButtonGroup->addButton(localMusicButton, 1);
     exploreButton->setCheckable(true);
+    exploreButton->setChecked(true);
     localMusicButton->setCheckable(true);
 
     connect(exploreButton, &QPushButton::clicked, this, &MainWidget::onStackButtonClicked);
@@ -62,38 +64,37 @@ void MainWidget::initSidebar()
 
 void MainWidget::initRight()
 {
-    //布局设置
+//布局设置
     rightLayout = new QVBoxLayout();
     rightLayout->setContentsMargins(0, 0, 0, 0);
     rightLayout->setSpacing(0);
-    //widget设置
+//widget设置
     rightWidget = new QWidget(this);
     contentLayout->addWidget(rightWidget);
     rightWidget->setLayout(rightLayout);
-    //初始化widget
+//初始化widget
     funcWidget = new QStackedWidget();
     exploreWidget = new ExploreWidget();
     localWidget = new LocalWidget();
 
-    //添加到StackedWidget
+//添加到StackedWidget
     funcWidget->addWidget(exploreWidget);
     funcWidget->addWidget(localWidget);
     funcWidget->setCurrentIndex(0);
-    exploreButton->setChecked(true);
 
-    //设置funcArea
+
+//设置funcArea
 
     funcArea = new QScrollArea();
-    funcArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    funcArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    funcArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    funcArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     funcArea->setWidget(funcWidget);
     funcWidget->setFixedWidth(funcArea->width());
     funcArea->setWidgetResizable(true); //
     funcArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     rightLayout->addWidget(funcArea);
 
-    //添加播放器
+//添加播放器
     playerWidget = new PlayerWidget();
     rightLayout->addWidget(playerWidget);
 }
@@ -101,10 +102,7 @@ void MainWidget::initRight()
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-
     funcWidget->setFixedWidth(funcArea->width());
-
-
 }
 
 void MainWidget::onStackButtonClicked()

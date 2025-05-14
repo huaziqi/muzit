@@ -18,6 +18,7 @@
 #include <QtMath>
 
 //页面布局
+#include <QMenuBar>
 #include <QMenu>
 #include <QWidget>
 #include <QFrame>
@@ -71,7 +72,7 @@ namespace common {
 
         if(width < 1400)
             column = 2;
-        if(width < 700)
+        if(width < 660)
             column = 1;
         return column;
     };

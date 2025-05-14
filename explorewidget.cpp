@@ -3,49 +3,72 @@
 ExploreWidget::ExploreWidget(QWidget *parent)
     : QWidget{parent}{
 
-
     mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop);
-    mainLayout->setContentsMargins(30, 0, 30, 0);
+    mainLayout->setContentsMargins(80, 0, 80, 0);
     manager = new QNetworkAccessManager();
     mainFont = common::vonwaoFont;
 
     initWeeklyMusic();
-    //this->setStyleSheet("border: 1px solid blue;");
 }
 
 void ExploreWidget::resizeEvent(QResizeEvent *event){
     QWidget::resizeEvent(event);
-    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() * 2);
+    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() - mainLayout->contentsMargins().right());
 
-    if(currentRankSongs.empty() | !weeklyMusicLayout)
+    if(currentRankSongs.empty() | !weeklyMusicLayout) //如果没有初始化好就return
         return;
 
-    int column = common::getColumn(this->width());
+    currentWeekSongsWidget->setFixedWidth(currentWeekSongsArea->width());
+    qDebug() << "in Explore :" << currentWeekSongsWidget->width();
 
+    int column = common::getColumn(currentWeekSongsArea->width());
     if(column == currentGridColumn)
         return;
 
     currentGridColumn = column;
-    rebuildGridLayout();
+    rebuildGridLayout();//重构布局
 
+}
+
+void ExploreWidget::initWeeklyMenu()
+{
+    chooseWeekMenu = new QMenu(this);
+    chooseWeekBtn = new QPushButton( QString("第 %1 期 ").arg(weeklyIdVector.last().period) );
+    chooseWeekBtn->setMenu(chooseWeekMenu);
+    weeklyMusicTopLayout->addWidget(chooseWeekBtn);
+
+    for(int i = 0; i <= (weeklyIdVector.count() - 1) / 10; i ++){
+        QMenu* tempMenu = new QMenu(QString("第%1期 ~ 第%2期").arg(i * 10 + 1).arg(qMin(weeklyIdVector.count(), (i + 1) * 10) ) );
+        chooseWeekMenu->addMenu(tempMenu);
+        for(int j = i * 10; j < qMin(weeklyIdVector.count(), (i + 1) * 10); j ++){
+            QAction *action = new QAction(QString("第 %1 期 ").arg(weeklyIdVector.at(j).period));
+            connect(action, &QAction::triggered, [j, this](){
+                currentWeekId = weeklyIdVector.at(j).ID;
+                //qDebug() << j << " " << currentWeekId;
+                chooseWeekBtn->setText(QString("第 %1 期 ").arg(weeklyIdVector.at(j).period));
+                getCurrentWeekRank();
+            });
+            tempMenu->addAction(action);
+        }
+    }
 }
 void ExploreWidget::rebuildGridLayout()
 {
     QLayoutItem* item;
     while ((item = currentWeekSongsLayout->takeAt(0)) != nullptr) {
-        if (QWidget* widget = item->widget()) { //当item->widget是QWidget时进入if
+        if (QWidget* widget = item->widget()) { //当item->widget是QWidget时进入if，一个语法糖
             currentWeekSongsLayout->removeWidget(widget);
             widget->setParent(nullptr);
         }
         delete item;
     }
 
-    // 重新按新的列数添加 widgets
+// 重新按新的列数添加 widgets
     for (int i = 0; i < currentRankSongs.count(); ++i) {
         auto widget = new MusicItemWidget(currentRankSongs[i]);
         int line = i % currentGridColumn;
-        if(currentGridColumn == 1)
+        if(currentGridColumn == 1) //currentGridColumn=1时会出问题
             line = 0;
         currentWeekSongsLayout->addWidget(widget, i / currentGridColumn, line);
     }
@@ -56,24 +79,27 @@ void ExploreWidget::rebuildGridLayout()
 
 
 void ExploreWidget::initWeeklyMusic(){
-    //初始化weeklywidget
+//初始化weeklywidget
     weeklyMusicWidget = new QFrame(this);
-    weeklyMusicWidget->setMaximumHeight(400);
     //weeklyMusicWidget->resize(this->width() - mainLayout->contentsMargins().right() * 2- mainLayout->contentsMargins().left() * 2, this->height());
-    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() * 2);
-    weeklyMusicWidget->setMinimumHeight(200);
+    weeklyMusicWidget->setMinimumHeight(180);
+    weeklyMusicWidget->setMaximumHeight(400);
+    weeklyMusicWidget->setFixedWidth(this->width() - mainLayout->contentsMargins().left() - mainLayout->contentsMargins().right());
+
+
+    weeklyMusicWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     weeklyMusicWidget->setFrameShape(QFrame::Box);
     mainLayout->addWidget(weeklyMusicWidget);
 
     weeklyMusicLayout = new QVBoxLayout(weeklyMusicWidget);
     weeklyMusicLayout->setSpacing(0);
-    weeklyMusicWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
 
 //初始化顶部
     weeklyMusicTopLayout = new QHBoxLayout();
     weeklyMusicLayout->addLayout(weeklyMusicTopLayout);
-    weeklyMusicLayout->setContentsMargins(0, 0, 0, 0);
-    weeklyMusicLayout->setSpacing(0);
+    weeklyMusicLayout->setContentsMargins(5, 5, 5, 5);
+    weeklyMusicLayout->setSpacing(10);
 //初始化label
     weeklyInfoLabel = new QLabel("<a href = \"https://music.bilibili.com/pc/rank\">bilibili音乐榜</a>");
     weeklyInfoLabel->setOpenExternalLinks(true);
@@ -81,35 +107,31 @@ void ExploreWidget::initWeeklyMusic(){
     mainFont.setPixelSize(20);
     weeklyInfoLabel->setFont(mainFont);
 
-//初始化menu
-    chooseWeekMenu = new QMenu();
-    //chooseWeekMenu->addAction(new QAction("hello"));
-    weeklyMusicTopLayout->addWidget(chooseWeekMenu);
+//获取信息
     getWeeklyHTMLInfo();
-
 }
 
 void ExploreWidget::initCurrentWeekMusic(){
-    //初始化
-    currentWeekSongsWidget = new QWidget();
+//初始化Layout和Widget
+    currentWeekSongsWidget = new QWidget(this);
     currentWeekSongsLayout = new QGridLayout(currentWeekSongsWidget);
+    currentWeekSongsLayout->setContentsMargins(0, 0, 0, 0);
+    currentWeekSongsLayout->setSpacing(10);
+//设置歌曲布局的scrollArea
     currentWeekSongsArea = new QScrollArea();
+    currentWeekSongsArea->setContentsMargins(0, 0, 0, 0);
+    //currentWeekSongsArea->setHorizontalScrollBar(nullptr);
     currentWeekSongsArea->setWidget(currentWeekSongsWidget);
-
     currentWeekSongsArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     currentWeekSongsArea->setWidgetResizable(true);
-    currentWeekSongsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    currentWeekSongsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+    currentWeekSongsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    currentWeekSongsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     weeklyMusicLayout->addWidget(currentWeekSongsArea, 1);
-    currentWeekSongsLayout->setSpacing(10);
 
-    currentGridColumn = common::getColumn(this->width());
-    rebuildGridLayout();
+    currentWeekSongsWidget->setFixedWidth(currentWeekSongsArea->width());
 
-
-    currentWeekSongsWidget->adjustSize();
-    weeklyMusicWidget->adjustSize();
+//布局已经初始化
+    weeklyMusicLayoutInited = true;
 }
 
 void ExploreWidget::getWeeklyHTMLInfo(){
@@ -141,14 +163,16 @@ void ExploreWidget::getWeeklyHTMLInfo(){
                 return a.period < b.period;
             });
         }
-        currentWeekId = weeklyIdVector.last().ID;
+        currentWeekId = weeklyIdVector.last().ID; //ID是真实的期数而不是index
+        initWeeklyMenu();
         getCurrentWeekRank();
         weeklyIdReply->deleteLater();
     });
 
 }
 
-void ExploreWidget::getCurrentWeekRank() //获取本周榜单音乐信息
+//获取本周榜单音乐信息
+void ExploreWidget::getCurrentWeekRank()
 {
     if(currentWeekId == -1)
         return;
@@ -179,7 +203,10 @@ void ExploreWidget::getCurrentWeekRank() //获取本周榜单音乐信息
                             songObj["creation_cover"].toString(),songObj["creation_play"].toInt(), songObj["creation_duration"].toInt(), songObj["rank"].toInt()));
             }
         }
-        initCurrentWeekMusic();
+        if(!weeklyMusicLayoutInited)
+            initCurrentWeekMusic();
+        currentGridColumn = common::getColumn(this->width());
+        rebuildGridLayout();
         currentRankReply->deleteLater();
     });
 
