@@ -76,7 +76,6 @@ void BiliResultList::clear()
     QLayoutItem *child;
     while ((child = scrollLayout->takeAt(0)) != nullptr) {
         if (QWidget *w = child->widget()) {
-            scrollLayout->removeWidget(w);
             w->deleteLater();
         }
         delete child;
@@ -85,6 +84,8 @@ void BiliResultList::clear()
 
 void BiliResultList::onItemExpandToggled(BiliResultItem *item)
 {
+    // expandToggled fires before BiliResultItem updates m_expanded,
+    // so isExpanded() still reflects the pre-click state here.
     if (expandedItem && expandedItem != item) {
         expandedItem->setExpanded(false);
     }
