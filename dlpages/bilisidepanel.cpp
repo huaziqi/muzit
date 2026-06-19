@@ -1,4 +1,5 @@
 #include "bilisidepanel.h"
+#include <QFileDialog>
 
 BiliSidePanel::BiliSidePanel(QWidget *parent)
     : QWidget{parent}
@@ -56,6 +57,9 @@ void BiliSidePanel::initSaveSettings()
     templateInput->setFixedHeight(24);
     templateInput->setStyleSheet("font-size: 11px;");
     mainLayout->addWidget(templateInput);
+    connect(templateInput, &QLineEdit::textChanged, this, [this]() {
+        emit saveSettingsChanged(currentSettings());
+    });
 
     // 音质
     QLabel *qualTitle = new QLabel("音质");
@@ -67,6 +71,9 @@ void BiliSidePanel::initSaveSettings()
     qualityBox->addItem("Hi-Res",    "hires");
     qualityBox->setFixedHeight(24);
     mainLayout->addWidget(qualityBox);
+    connect(qualityBox, &QComboBox::currentIndexChanged, this, [this]() {
+        emit saveSettingsChanged(currentSettings());
+    });
 }
 
 void BiliSidePanel::initFavorites()

@@ -5,7 +5,6 @@
 #include "bilitypes.h"
 #include <QLineEdit>
 #include <QComboBox>
-#include <QFileDialog>
 #include <QProgressBar>
 
 class BiliSidePanel : public QWidget
