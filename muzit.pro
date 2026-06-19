@@ -9,6 +9,12 @@ CONFIG += c++17
 
 SOURCES += \
     config.cpp \
+    dlpages/bilidlwidget.cpp \
+    dlpages/bilisearchbar.cpp \
+    dlpages/bilisidepanel.cpp \
+    dlpages/biliresultitem.cpp \
+    dlpages/biliresultlist.cpp \
+    downloadwidget.cpp \
     explorewidget.cpp \
     framelesswidget.cpp \
     localwidget.cpp \
@@ -20,6 +26,13 @@ SOURCES += \
 HEADERS += \
     common.h \
     config.h \
+    dlpages/bilidlwidget.h \
+    dlpages/bilitypes.h \
+    dlpages/bilisearchbar.h \
+    dlpages/bilisidepanel.h \
+    dlpages/biliresultitem.h \
+    dlpages/biliresultlist.h \
+    downloadwidget.h \
     explorewidget.h \
     framelesswidget.h \
     localwidget.h \
@@ -33,4 +46,5 @@ RESOURCES += \
 FORMS +=
 
 INCLUDEPATH += $$PWD/musicItem
+INCLUDEPATH += $$PWD/dlpages
 include($$PWD/musicItem/musicItemMoudle.pri)
