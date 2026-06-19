@@ -123,13 +123,13 @@ void BiliResultItem::setExpanded(bool expanded)
     if (m_expanded == expanded) return;
     m_expanded = expanded;
 
-    detailWidget->setVisible(expanded);
     rowWidget->setStyleSheet(expanded ? "background: #eeeeea;" : "");
 
     // 展开/折叠动画
     QPropertyAnimation *anim = new QPropertyAnimation(detailWidget, "maximumHeight");
     anim->setDuration(150);
     if (expanded) {
+        detailWidget->setVisible(true);
         detailWidget->setMaximumHeight(0);
         anim->setStartValue(0);
         anim->setEndValue(detailWidget->sizeHint().height());
@@ -145,8 +145,6 @@ void BiliResultItem::setExpanded(bool expanded)
         });
     }
     anim->start(QAbstractAnimation::DeleteWhenStopped);
-
-    adjustSize();
 }
 
 void BiliResultItem::mousePressEvent(QMouseEvent *event)
