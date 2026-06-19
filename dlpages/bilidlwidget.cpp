@@ -58,19 +58,19 @@ void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type
     qDebug() << "[BiliDLWidget] search:" << keyword;
 }
 
-void BiliDLWidget::onItemSelected(BiliVideoInfo info)
+void BiliDLWidget::onItemSelected(const BiliVideoInfo &info)
 {
     sidePanel->setSelectedSong(info);
 }
 
-void BiliDLWidget::onDownloadRequested(BiliVideoInfo info)
+void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入真实下载
     sidePanel->addDownloadTask(info.title);
     qDebug() << "[BiliDLWidget] download:" << info.bvId;
 }
 
-void BiliDLWidget::onFavoriteRequested(BiliVideoInfo info)
+void BiliDLWidget::onFavoriteRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入收藏逻辑
     qDebug() << "[BiliDLWidget] favorite:" << info.bvId;

@@ -23,9 +23,9 @@ private:
 
 private slots:
     void onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize);
-    void onItemSelected(BiliVideoInfo info);
-    void onDownloadRequested(BiliVideoInfo info);
-    void onFavoriteRequested(BiliVideoInfo info);
+    void onItemSelected(const BiliVideoInfo &info);
+    void onDownloadRequested(const BiliVideoInfo &info);
+    void onFavoriteRequested(const BiliVideoInfo &info);
 
 signals:
 };
