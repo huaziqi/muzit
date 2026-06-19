@@ -47,6 +47,7 @@ private:
     void rebuildGridLayout();
     bool weeklyMusicLayoutInited = false;//判断是否初始化过了
 
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
@@ -57,6 +58,8 @@ private:
     void initCurrentWeekMusic();
     void getWeeklyHTMLInfo();
     void getCurrentWeekRank();
+
+    QString timestampToDateTime(int timestamp, QString dateText);
 signals:
 };
 

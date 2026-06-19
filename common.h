@@ -18,6 +18,7 @@
 #include <QtMath>
 
 //页面布局
+#include <QTabWidget>
 #include <QMenuBar>
 #include <QMenu>
 #include <QWidget>

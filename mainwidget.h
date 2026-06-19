@@ -7,6 +7,7 @@
 #include "playerwidget.h"
 #include "localwidget.h"
 #include "framelesswidget.h"
+#include "downloadwidget.h"
 
 class MainWidget : public FramelessWidget
 {
@@ -18,10 +19,12 @@ private:
     QScrollArea* funcArea; //可滚动的功能区域
     QLabel *sideTitle;
     QButtonGroup *stackButtonGroup;
-    QPushButton *exploreButton, *localMusicButton;
+    int curStackButtonID = 0;
+    QPushButton *exploreButton, *localMusicButton, *downloadMusicButton;
     QStackedWidget* funcWidget;
     ExploreWidget *exploreWidget;
     LocalWidget *localWidget;
+    DownloadWidget* downloadWidget;
 
     PlayerWidget* playerWidget;
     QFont *sideBarFont;
@@ -29,6 +32,7 @@ private:
 private:
     void initSidebar();
     void initRight();
+    QPushButton* createButton(const QString& name);
 protected:
     void resizeEvent(QResizeEvent* event);
 private slots:

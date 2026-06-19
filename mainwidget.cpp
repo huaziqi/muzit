@@ -13,10 +13,22 @@ MainWidget::MainWidget(QWidget *parent)
 
     sideBarFont = new QFont("VonwaonBitmap 16px", 16);
     initSidebar();
+
     initRight();
-    this->resize(800, 600);
+    this->resize(840, 600);
 }
 
+QPushButton* MainWidget::createButton(const QString& name){
+    QPushButton* button = new QPushButton(name);
+    button->setFixedSize(160, 50);
+    button->setFont(*sideBarFont);
+    button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    sidebarLayout->addWidget(button);
+    stackButtonGroup->addButton(button, curStackButtonID ++);
+    button->setCheckable(true);
+    connect(button, &QPushButton::clicked, this, &MainWidget::onStackButtonClicked);
+    return button;
+}
 
 void MainWidget::initSidebar()
 {
@@ -29,36 +41,19 @@ void MainWidget::initSidebar()
     sidebarLayout->setSpacing(10);
     sidebarLayout->setAlignment(Qt::AlignTop);
     sidebarLayout->setAlignment(Qt::AlignHCenter);
-
-
+//设置sideTitle
     sideTitle = new QLabel(this);
     sideTitle->setAlignment(Qt::AlignCenter);
     sideTitle->setText("Muzit");
     sideTitle->setFont(*sideBarFont);
     sidebarLayout->addWidget(sideTitle);
-
+//设置sidebar的按钮
     stackButtonGroup = new QButtonGroup();
-    exploreButton = new QPushButton("探索音乐");
-    localMusicButton = new QPushButton("本地音乐");
-    exploreButton->setFixedSize(160, 50);
-    localMusicButton->setFixedSize(160, 50);
+    exploreButton = createButton("探索");
+    downloadMusicButton = createButton("下载");
+    localMusicButton = createButton("本地");
 
-    exploreButton->setFont(*sideBarFont);
-    localMusicButton->setFont(*sideBarFont);
-    exploreButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    localMusicButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-
-    sidebarLayout->addWidget(exploreButton);
-    sidebarLayout->addWidget(localMusicButton);
-    stackButtonGroup->addButton(exploreButton, 0);
-    stackButtonGroup->addButton(localMusicButton, 1);
-    exploreButton->setCheckable(true);
     exploreButton->setChecked(true);
-    localMusicButton->setCheckable(true);
-
-    connect(exploreButton, &QPushButton::clicked, this, &MainWidget::onStackButtonClicked);
-    connect(localMusicButton, &QPushButton::clicked, this, &MainWidget::onStackButtonClicked);
-
     sidebarLayout->addStretch(1);
 }
 
@@ -74,24 +69,26 @@ void MainWidget::initRight()
     rightWidget->setLayout(rightLayout);
 //初始化widget
     funcWidget = new QStackedWidget();
+
+    downloadWidget = new DownloadWidget();
+    qDebug() << "rest";
     exploreWidget = new ExploreWidget();
     localWidget = new LocalWidget();
 
 //添加到StackedWidget
     funcWidget->addWidget(exploreWidget);
+    funcWidget->addWidget(downloadWidget);
     funcWidget->addWidget(localWidget);
     funcWidget->setCurrentIndex(0);
 
-
 //设置funcArea
-
     funcArea = new QScrollArea();
     funcArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     funcArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     funcArea->setWidget(funcWidget);
-    funcWidget->setFixedWidth(funcArea->width());
+    funcWidget->setFixedWidth(funcArea->viewport()->width());
     funcArea->setWidgetResizable(true); //
-    funcArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    funcArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     rightLayout->addWidget(funcArea);
 
 //添加播放器
@@ -102,7 +99,7 @@ void MainWidget::initRight()
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    funcWidget->setFixedWidth(funcArea->width());
+    funcWidget->setFixedWidth(funcArea->viewport()->width());
 }
 
 void MainWidget::onStackButtonClicked()

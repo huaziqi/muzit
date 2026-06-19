@@ -1,0 +1,94 @@
+<h2>BiliWidget 整体布局方案</h2>
+<p class="subtitle">三种布局思路，选一个最接近你想要的方向</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:12px;background:#f5f5f0;border:1px solid #ccc;border-radius:4px;padding:8px;line-height:1.8">
+        <div style="background:#d0d0ca;border-radius:3px;padding:4px 8px;margin-bottom:4px;text-align:center">🔍 搜索框 ＋ BV/标题切换 ＋ 搜索按钮</div>
+        <div style="display:flex;gap:4px;height:180px">
+          <div style="flex:1;background:#e8e8e2;border-radius:3px;padding:6px;overflow:hidden">
+            <div style="font-size:10px;color:#666;margin-bottom:4px">搜索结果列表（可滚动）</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+            <div style="background:#ddd;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+          </div>
+          <div style="width:140px;background:#e0ddd6;border-radius:3px;padding:6px">
+            <div style="font-size:10px;color:#666;margin-bottom:4px">右侧面板</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">📋 选中视频信息</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">⬇ 下载进度</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">⚙ 下载选项</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 列表 ＋ 右侧详情面板</h3>
+      <p>搜索结果用紧凑行列表，点击行后右侧展示详情和下载选项。信息密度高，适合快速浏览多条结果。</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:12px;background:#f5f5f0;border:1px solid #ccc;border-radius:4px;padding:8px;line-height:1.8">
+        <div style="background:#d0d0ca;border-radius:3px;padding:4px 8px;margin-bottom:4px;text-align:center">🔍 搜索框 ＋ 类型 ＋ 音质选项 ＋ 搜索</div>
+        <div style="display:flex;gap:4px;height:180px">
+          <div style="flex:1;background:#e8e8e2;border-radius:3px;padding:6px;overflow:hidden">
+            <div style="font-size:10px;color:#666;margin-bottom:4px">搜索结果（卡片网格）</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+              <div style="background:#fff;border-radius:2px;padding:4px;font-size:9px">🖼<br/>标题<br/>UP主</div>
+              <div style="background:#ddd;border-radius:2px;padding:4px;font-size:9px">🖼<br/>标题<br/>UP主</div>
+              <div style="background:#fff;border-radius:2px;padding:4px;font-size:9px">🖼<br/>标题<br/>UP主</div>
+              <div style="background:#fff;border-radius:2px;padding:4px;font-size:9px">🖼<br/>标题<br/>UP主</div>
+            </div>
+          </div>
+          <div style="width:140px;background:#e0ddd6;border-radius:3px;padding:6px">
+            <div style="font-size:10px;color:#666;margin-bottom:4px">右侧面板</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">📋 详情 / 封面</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">⬇ 下载队列</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">📁 保存路径</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 卡片网格 ＋ 右侧面板</h3>
+      <p>搜索结果用带封面的小卡片，视觉更丰富。右侧显示选中项详情和下载队列。适合重视封面预览的场景，但一屏能显示的条数较少。</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:12px;background:#f5f5f0;border:1px solid #ccc;border-radius:4px;padding:8px;line-height:1.8">
+        <div style="background:#d0d0ca;border-radius:3px;padding:4px 8px;margin-bottom:4px;text-align:center">🔍 搜索框 ＋ BV/标题切换 ＋ 搜索按钮</div>
+        <div style="display:flex;gap:4px;height:180px">
+          <div style="flex:1;background:#e8e8e2;border-radius:3px;padding:6px;display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:10px;color:#666">搜索结果列表</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+            <div style="background:#ddd;border-radius:2px;padding:3px 5px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇  ← 选中</div>
+            <div style="background:#e0ddd6;border-radius:2px;padding:6px;font-size:10px;margin-top:2px">
+              ↳ 展开详情：封面大图 ｜ 分P列表 ｜ 音质选择 ｜ [下载] 按钮
+            </div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">▶ 封面 | 标题 | UP主 | 时长 | ⬇</div>
+          </div>
+          <div style="width:140px;background:#e0ddd6;border-radius:3px;padding:6px">
+            <div style="font-size:10px;color:#666;margin-bottom:4px">右侧工具栏</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">⬇ 下载队列</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;margin-bottom:3px;font-size:10px">📁 保存路径</div>
+            <div style="background:#fff;border-radius:2px;padding:3px 5px;font-size:10px">⚙ 设置</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — 列表内联展开 ＋ 右侧工具栏</h3>
+      <p>点击结果行后在列表内就地展开详情和下载选项，右侧只保留下载队列和设置。省去了频繁在左右两侧来回看的眼球跳动。</p>
+    </div>
+  </div>
+
+</div>

@@ -6,12 +6,12 @@ MusicItemWidget::MusicItemWidget(MusicItem* _musicItem, QWidget *parent)
     this->setAttribute(Qt::WA_StyledBackground);
 
     labelFont = common::vonwaoFont;
-    labelFont.setPixelSize(10);
+    labelFont.setPixelSize(13);
 
     musicItem = _musicItem;
     musicItem->setWidget(this);
     mainLayout = new QHBoxLayout(this);
-    mainLayout->setContentsMargins(5, 5, 5, 0);
+    mainLayout->setContentsMargins(5, 5, 5, 10);
 
     manager = new QNetworkAccessManager;
 
@@ -80,7 +80,7 @@ void MusicItemWidget::gotCover()
 void MusicItemWidget::initLayout(){
     coverLabel = new QLabel();
     coverPixMap = QPixmap(coverFileName).scaled(197, 197 * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    lastWidth = 200;
+    lastWidth = 197;
     QPainter painter(&coverPixMap);
     painter.setRenderHint(QPainter::Antialiasing); //抗锯齿
 
@@ -142,11 +142,15 @@ void MusicItemWidget::initInfo()
     infoLayout->setContentsMargins(0, 10, 0, 5);
 
     titleLabel = new QLabel(musicItem->title);
+    titleLabel->setFont(labelFont);
     titleLabel->setFixedWidth(170);
     titleLabel->setWordWrap(true);
+    titleLabel->setAlignment(Qt::AlignTop);
     authorLabel = new QLabel(musicItem->author);
+    authorLabel->setFont(labelFont);
     authorLabel->setMargin(0);
     playedNumLabel = new QLabel(QString::number(musicItem->playedNum));
+    authorLabel->setFont(labelFont);
     playedNumLabel->setMargin(0);
 
     infoLayout->addWidget(titleLabel);
