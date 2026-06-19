@@ -25,7 +25,7 @@ private slots:
     void onSearchClicked();
 
 signals:
-    void searchRequested(QString keyword, BiliSearchType type, int pageSize);
+    void searchRequested(const QString &keyword, BiliSearchType type, int pageSize);
 };
 
 #endif // BILISEARCHBAR_H
