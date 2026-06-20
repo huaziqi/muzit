@@ -28,6 +28,9 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QProgressBar>
 
 //控件
 #include <QStackedWidget>
@@ -35,6 +38,7 @@
 #include <QButtonGroup>
 #include <QLabel>
 #include <QTimer>
+
 
 //UI
 #include <QPixmap>

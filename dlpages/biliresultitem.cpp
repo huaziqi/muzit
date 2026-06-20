@@ -50,7 +50,7 @@ void BiliResultItem::initRow()
     textLayout->addWidget(titleLabel);
     textLayout->addWidget(metaLabel);
 
-    quickDownloadBtn = new QPushButton("⬇ 下载");
+    quickDownloadBtn = new QPushButton("下载");
     quickDownloadBtn->setFixedSize(60, 24);
     quickDownloadBtn->setStyleSheet("font-size: 11px;");
     connect(quickDownloadBtn, &QPushButton::clicked, this, [this]() {
@@ -96,7 +96,7 @@ void BiliResultItem::initDetail()
     btnLayout->setSpacing(4);
     btnLayout->setAlignment(Qt::AlignVCenter);
 
-    downloadBtn = new QPushButton("⬇ 加入下载");
+    downloadBtn = new QPushButton("加入下载");
     downloadBtn->setFixedSize(90, 26);
     downloadBtn->setStyleSheet("font-size: 11px; background:#555; color:#fff; border-radius:3px;");
     connect(downloadBtn, &QPushButton::clicked, this, [this]() {

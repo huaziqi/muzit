@@ -16,6 +16,9 @@ BiliSidePanel::BiliSidePanel(QWidget *parent)
     mainLayout->addWidget(makeSeparator());
     initDownloadQueue();
     mainLayout->addStretch(1);
+
+    connect(this, &BiliSidePanel::saveSettingsChanged,
+            this, &BiliSidePanel::onSettingsChanged);
 }
 
 QFrame *BiliSidePanel::makeSeparator()
@@ -28,6 +31,9 @@ QFrame *BiliSidePanel::makeSeparator()
 
 void BiliSidePanel::initSaveSettings()
 {
+//默认设置
+    defaultPath =  QDir::homePath() + "/Music";
+
     QLabel *title = new QLabel("保存设置");
     title->setStyleSheet("font-weight: bold; font-size: 11px;");
     mainLayout->addWidget(title);
@@ -39,7 +45,7 @@ void BiliSidePanel::initSaveSettings()
 
     QHBoxLayout *pathRow = new QHBoxLayout();
     pathRow->setSpacing(4);
-    pathLabel = new QLabel(QDir::homePath() + "/Music");
+    pathLabel = new QLabel();
     pathLabel->setStyleSheet("font-size: 10px; color: #888;");
     pathLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     browseBtn = new QPushButton("…");
@@ -53,7 +59,7 @@ void BiliSidePanel::initSaveSettings()
     QLabel *tmplTitle = new QLabel("文件名模板");
     tmplTitle->setStyleSheet("font-size: 11px; color: #666;");
     mainLayout->addWidget(tmplTitle);
-    templateInput = new QLineEdit("{title} - {author}");
+    templateInput = new QLineEdit();
     templateInput->setFixedHeight(24);
     templateInput->setStyleSheet("font-size: 11px;");
     mainLayout->addWidget(templateInput);
@@ -74,6 +80,21 @@ void BiliSidePanel::initSaveSettings()
     connect(qualityBox, &QComboBox::currentIndexChanged, this, [this]() {
         emit saveSettingsChanged(currentSettings());
     });
+
+    initConfig();
+}
+
+void BiliSidePanel::initConfig(){
+    pathLabel->setText(Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::SavePathKey, defaultPath).toString());
+    templateInput->setText(Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::FileNameTemplateKey, defaultTemplate).toString());
+    QString quality = Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::QualityKey, defaultQaulity).toString();
+    int idx = qualityBox->findData(quality);
+    if(idx >= 0){
+        qualityBox->setCurrentIndex(idx);
+    }
+    else{
+        qualityBox->setCurrentIndex(0);
+    }
 }
 
 void BiliSidePanel::initFavorites()
@@ -163,4 +184,12 @@ void BiliSidePanel::onBrowseClicked()
         pathLabel->setText(dir);
         emit saveSettingsChanged(currentSettings());
     }
+}
+
+
+
+void BiliSidePanel::onSettingsChanged(const BiliSaveSettings& settings){
+    Config::instance().setValuewithGroup(configGroup, settings.SavePathKey, settings.savePath);
+    Config::instance().setValuewithGroup(configGroup, settings.FileNameTemplateKey, settings.fileNameTemplate);
+    Config::instance().setValuewithGroup(configGroup, settings.QualityKey, settings.quality);
 }

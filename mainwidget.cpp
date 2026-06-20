@@ -5,8 +5,6 @@
 MainWidget::MainWidget(QWidget *parent)
     : FramelessWidget(parent){
 
-    Config config;
-    config.readConfig();
     common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");
     titleBar->setTitle("Muzit");
     this->setMinimumSize(QSize(800, 600));

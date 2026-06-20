@@ -3,35 +3,35 @@
 
 #include "common.h"
 #include "bilitypes.h"
-#include <QLineEdit>
-#include <QComboBox>
-#include <QProgressBar>
+#include "config.h"
 
 class BiliSidePanel : public QWidget
 {
     Q_OBJECT
 public:
     explicit BiliSidePanel(QWidget *parent = nullptr);
-    void             setSelectedSong(const BiliVideoInfo &info);
+    void setSelectedSong(const BiliVideoInfo &info);
     BiliSaveSettings currentSettings() const;
-    void             addDownloadTask(const QString &title);
+    void addDownloadTask(const QString &title);
 
 private:
     QVBoxLayout *mainLayout;
 
     // 保存设置区
-    QLabel      *pathLabel;
+    QLabel *pathLabel;
     QPushButton *browseBtn;
-    QLineEdit   *templateInput;
-    QComboBox   *qualityBox;
+    QLineEdit *templateInput;
+    QComboBox *qualityBox;
+    const QString configGroup = "bilibili";
+
 
     // 收藏区
-    QLabel      *selectedSongLabel;
+    QLabel *selectedSongLabel;
     QPushButton *favoriteBtn;
 
     // 下载队列区
     QScrollArea *queueArea;
-    QWidget     *queueWidget;
+    QWidget *queueWidget;
     QVBoxLayout *queueLayout;
 
     BiliVideoInfo currentInfo;
@@ -39,13 +39,20 @@ private:
     void initSaveSettings();
     void initFavorites();
     void initDownloadQueue();
+    void initConfig();
     QFrame *makeSeparator();
+
+    //配置存储信息
+    QString defaultPath;
+    const QString defaultTemplate = "{title} - {author}";
+    const QString defaultQaulity = "320kbps";
 
 private slots:
     void onBrowseClicked();
+    void onSettingsChanged(const BiliSaveSettings& settings);
 
 signals:
-    void saveSettingsChanged(BiliSaveSettings settings);
+    void saveSettingsChanged(const BiliSaveSettings& settings);
     void favoriteRequested(BiliVideoInfo info);
 };
 

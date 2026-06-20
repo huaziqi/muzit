@@ -10,16 +10,19 @@ struct BiliVideoInfo {
     QString title;
     QString author;
     QString coverUrl;
-    int     duration;   // 秒
-    int     partCount;
+    int duration;   // 秒
+    int partCount;
     QString description;
-    int     playCount;
+    int playCount;
 };
 
 struct BiliSaveSettings {
     QString savePath;
-    QString fileNameTemplate;  // 支持 {title} {author} {bvid}
+    static constexpr const char* SavePathKey = "savePath";
+    QString fileNameTemplate;  // 支持 {title} {author}
+    static constexpr const char* FileNameTemplateKey = "fileNameTemplate";
     QString quality;           // "320kbps" / "192kbps" / "hires"
+    static constexpr const char* QualityKey = "quality";
 };
 
 #endif // BILITYPES_H

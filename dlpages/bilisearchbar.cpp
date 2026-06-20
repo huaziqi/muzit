@@ -8,9 +8,9 @@ BiliSearchBar::BiliSearchBar(QWidget *parent)
     mainLayout->setSpacing(6);
 
     // 搜索类型切换按钮组
-    typeGroup   = new QButtonGroup(this);
-    keywordBtn  = new QPushButton("关键词");
-    bvidBtn     = new QPushButton("BV号");
+    typeGroup = new QButtonGroup(this);
+    keywordBtn = new QPushButton("关键词");
+    bvidBtn = new QPushButton("BV号");
     for (auto *btn : {keywordBtn, bvidBtn}) {
         btn->setCheckable(true);
         btn->setFixedHeight(28);

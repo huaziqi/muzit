@@ -3,8 +3,6 @@
 
 #include "common.h"
 #include "bilitypes.h"
-#include <QLineEdit>
-#include <QComboBox>
 
 class BiliSearchBar : public QWidget
 {
@@ -13,13 +11,13 @@ public:
     explicit BiliSearchBar(QWidget *parent = nullptr);
 
 private:
-    QHBoxLayout  *mainLayout;
+    QHBoxLayout *mainLayout;
     QButtonGroup *typeGroup;
-    QPushButton  *keywordBtn;
-    QPushButton  *bvidBtn;
-    QLineEdit    *searchInput;
-    QPushButton  *searchBtn;
-    QComboBox    *pageSizeBox;
+    QPushButton *keywordBtn;
+    QPushButton *bvidBtn;
+    QLineEdit *searchInput;
+    QPushButton *searchBtn;
+    QComboBox *pageSizeBox;
 
 private slots:
     void onSearchClicked();

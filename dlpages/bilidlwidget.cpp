@@ -54,8 +54,9 @@ void BiliDLWidget::loadDemoData()
 void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize)
 {
     Q_UNUSED(type); Q_UNUSED(pageSize);
-    // 占位：后续接入真实 API
-    qDebug() << "[BiliDLWidget] search:" << keyword;
+    if(type == BiliSearchType::BvId){
+
+    }
 }
 
 void BiliDLWidget::onItemSelected(const BiliVideoInfo &info)
@@ -74,4 +75,8 @@ void BiliDLWidget::onFavoriteRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入收藏逻辑
     qDebug() << "[BiliDLWidget] favorite:" << info.bvId;
+}
+
+void onSettingsChanged(BiliSaveSettings settings){
+
 }

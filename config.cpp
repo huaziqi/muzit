@@ -1,46 +1,43 @@
 #include "config.h"
-#include <QDebug>
-#include <QStandardPaths>
-#include <QDir>
-#include <QMessageBox>
 
-void Config::initConfig(const QString& filePath){
-    QFile configFile = QFile(filePath);
-    QJsonObject configJson;
-    configJson["colorPlan"] = "normal";
-    configJson["read"] = "true";
-    QJsonArray testArray;
-    testArray.append("1");
-    testArray.append("2");
-    testArray.append("3");
-    configJson["testArray"] = testArray;
-    QJsonDocument jsonDoc(configJson);
-    if(configFile.open(QIODevice::WriteOnly | QIODevice::Text)){
-        configFile.write(jsonDoc.toJson(QJsonDocument::Indented));
-        configFile.close();
-        qDebug() << "文件创建在" << filePath;
-    }
-    else{
-        qDebug() << "文件打开失败";
-    }
+Config& Config::instance(){
+    static Config inst;
+    return inst;
 }
 
-void Config::readConfig()
-{
-    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    QString configPath = configDir + "/config.json";
-    qDebug() << configPath;
-    QFile configFile = QFile(configPath);
-    if(configFile.exists())
-        qDebug() << "";
-    else{
-        if(!QDir(configDir).exists()){
-            if(QDir().mkdir(configDir)) initConfig(configPath);
-            else QMessageBox::warning(nullptr, "警告", "文件夹创建失败");
-        }
-        else
-            initConfig(configPath); //是否存在其他应用配置文件夹同名？maybe
-    }
+Config::Config()
+    : m_settings(QSettings::IniFormat, QSettings::UserScope, "transpire", "muzit") {
+    qDebug() << "配置文件路径：" << m_settings.fileName();
 }
 
-Config::Config() {}
+Config::~Config(){
+    QWriteLocker locker(&m_lock);
+    m_settings.sync();
+}
+
+QVariant Config::getValuewithGroup(const QString& settingsGroup, const QString& key, const QVariant& defaultValues) const{
+    QReadLocker locker(&m_lock);
+    m_settings.beginGroup(settingsGroup);
+    QVariant result = m_settings.value(key, defaultValues);
+    m_settings.endGroup();
+
+    return result;
+}
+
+void Config::setValue(const QString& key, const QVariant& value){
+    {
+        QWriteLocker locker(&m_lock);
+        m_settings.setValue(key, value);
+    }
+    emit settingsChanged(key, value);
+}
+
+void Config::setValuewithGroup(const QString& settingsGroup, const QString& key, const QVariant& value){
+    {
+        QWriteLocker locker(&m_lock);
+        m_settings.beginGroup(settingsGroup);
+        m_settings.setValue(key, value);
+        m_settings.endGroup();
+    }
+    emit settingsChanged(settingsGroup, key, value);
+}
