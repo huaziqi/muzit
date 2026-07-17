@@ -9,11 +9,14 @@ CONFIG += c++17
 
 SOURCES += \
     config.cpp \
+    dlpages/bilidltool.cpp \
     dlpages/bilidlwidget.cpp \
     dlpages/bilisearchbar.cpp \
     dlpages/bilisidepanel.cpp \
     dlpages/biliresultitem.cpp \
     dlpages/biliresultlist.cpp \
+    download/downloadmanager.cpp \
+    download/downloadtask.cpp \
     downloadwidget.cpp \
     explorewidget.cpp \
     framelesswidget.cpp \
@@ -26,12 +29,15 @@ SOURCES += \
 HEADERS += \
     common.h \
     config.h \
+    dlpages/bilidltool.h \
     dlpages/bilidlwidget.h \
     dlpages/bilitypes.h \
     dlpages/bilisearchbar.h \
     dlpages/bilisidepanel.h \
     dlpages/biliresultitem.h \
     dlpages/biliresultlist.h \
+    download/downloadmanager.h \
+    download/downloadtask.h \
     downloadwidget.h \
     explorewidget.h \
     framelesswidget.h \

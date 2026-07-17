@@ -2,6 +2,7 @@
 #define BILIDLWIDGET_H
 
 #include "common.h"
+#include "download/downloadmanager.h"
 #include "bilitypes.h"
 #include "bilisearchbar.h"
 #include "biliresultlist.h"
@@ -11,13 +12,14 @@ class BiliDLWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BiliDLWidget(QWidget *parent = nullptr);
+    explicit BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent = nullptr);
 
 private:
     QVBoxLayout  *mainLayout;
     BiliSearchBar  *searchBar;
     BiliResultList *resultList;
     BiliSidePanel  *sidePanel;
+    DownloadManager *downloadManager;
 
     void loadDemoData();
 

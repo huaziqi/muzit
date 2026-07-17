@@ -3,20 +3,23 @@
 
 #include "common.h"
 #include "dlpages/bilidlwidget.h"
+#include "download/downloadmanager.h"
 
 class DownloadWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DownloadWidget(QWidget *parent = nullptr);
+    explicit DownloadWidget(DownloadManager *_downloadManager, QWidget *parent = nullptr);
 
 private:
-
+    DownloadManager *downloadManager;
     QTabWidget* dlChannel;
     QVBoxLayout* mainLayout;
 
     BiliDLWidget* biliDlWidget;
 signals:
+
+
 };
 
 #endif // DOWNLOADWIDGET_H

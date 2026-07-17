@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 //文件处理
 #include <QFile>
+#include <QSaveFile>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -53,6 +54,7 @@
 
 //结构体
 #include <QVector>
+#include <QQueue>
 
 //网络
 #include <QNetworkAccessManager>

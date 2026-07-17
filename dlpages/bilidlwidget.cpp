@@ -1,7 +1,7 @@
 #include "bilidlwidget.h"
 
-BiliDLWidget::BiliDLWidget(QWidget *parent)
-    : QWidget{parent}
+BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
+    : QWidget{parent}, downloadManager(_downloadManager)
 {
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);

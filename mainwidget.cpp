@@ -5,6 +5,9 @@
 MainWidget::MainWidget(QWidget *parent)
     : FramelessWidget(parent){
 
+    //初始化downloadmanager
+    downloadManager = new DownloadManager(this);
+
     common::loadFont(":/fonts/resources/font/VonwaonBitmap.ttf");
     titleBar->setTitle("Muzit");
     this->setMinimumSize(QSize(800, 600));
@@ -69,7 +72,6 @@ void MainWidget::initRight()
     funcWidget = new QStackedWidget();
 
     downloadWidget = new DownloadWidget();
-    qDebug() << "rest";
     exploreWidget = new ExploreWidget();
     localWidget = new LocalWidget();
 

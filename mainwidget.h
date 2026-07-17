@@ -8,6 +8,7 @@
 #include "localwidget.h"
 #include "framelesswidget.h"
 #include "downloadwidget.h"
+#include "download/downloadmanager.h"
 
 class MainWidget : public FramelessWidget
 {
@@ -29,6 +30,7 @@ private:
     PlayerWidget* playerWidget;
     QFont *sideBarFont;
 
+    DownloadManager *downloadManager;
 private:
     void initSidebar();
     void initRight();

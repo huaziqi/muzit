@@ -1,12 +1,17 @@
 #include "downloadwidget.h"
 
-DownloadWidget::DownloadWidget(QWidget *parent)
-    : QWidget{parent}
+DownloadWidget::DownloadWidget(DownloadManager *_downloadManager, QWidget *parent)
+    : QWidget{parent}, downloadManager(_downloadManager)
 {
     mainLayout = new QVBoxLayout(this);
     dlChannel = new QTabWidget();
     mainLayout->addWidget(dlChannel);
-    biliDlWidget = new BiliDLWidget();
+    biliDlWidget = new BiliDLWidget(downloadManager);
     dlChannel->addTab(biliDlWidget, "bilibili");
+
+}
+
+void DownloadWidget::taskFinished(DownloadTask *task)
+{
 
 }

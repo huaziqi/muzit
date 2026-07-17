@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Collaboration Rules
+
+- Do NOT proactively write or modify code for this project unless explicitly asked by the user.
+
 ## Project Overview
 
 Muzit is a Qt6 desktop music player application (C++17) that aggregates Bilibili music charts. It uses a custom frameless window with drag-resize support and fetches chart data from the Bilibili API.
