@@ -71,8 +71,8 @@ void MainWidget::initRight()
 //初始化widget
     funcWidget = new QStackedWidget();
 
-    downloadWidget = new DownloadWidget();
-    exploreWidget = new ExploreWidget();
+    downloadWidget = new DownloadWidget(downloadManager);
+    exploreWidget = new ExploreWidget(downloadManager);
     localWidget = new LocalWidget();
 
 //添加到StackedWidget

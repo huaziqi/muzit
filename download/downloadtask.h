@@ -10,6 +10,7 @@ public:
     explicit DownloadTask(const QString& _url, const QString& _path, QObject *parent = nullptr);
 public:
     void start(QNetworkAccessManager *manager);
+    void stop();
     void cancel();
 
 private:

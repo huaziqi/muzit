@@ -1,7 +1,7 @@
 #include "explorewidget.h"
 
-ExploreWidget::ExploreWidget(QWidget *parent)
-    : QWidget{parent}{
+ExploreWidget::ExploreWidget(DownloadManager *_downloadManager, QWidget *parent)
+    : QWidget{parent} , downloadManager(_downloadManager){
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop);
@@ -53,6 +53,8 @@ void ExploreWidget::initWeeklyMenu()
         }
     }
 }
+
+
 void ExploreWidget::rebuildGridLayout()
 {
     QLayoutItem* item;
@@ -136,9 +138,8 @@ void ExploreWidget::initCurrentWeekMusic(){
 }
 
 void ExploreWidget::getWeeklyHTMLInfo(){
-    weeklyIdRequest = new QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period?list_type=1")); //获取所有的list_id
-
-    weeklyIdReply = manager->get(*weeklyIdRequest);
+    QNetworkRequest weeklyIdRequest = QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period?list_type=1")); //获取所有的list_id
+    weeklyIdReply = downloadManager->fetch(weeklyIdRequest);
     connect(weeklyIdReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
         if(bytesTotal > 0){
             qDebug() << bytesReceived << "/" << bytesTotal;
@@ -181,8 +182,9 @@ void ExploreWidget::getCurrentWeekRank()
         currentRankSongs.pop_back();
         delete tempItem;
     }
-    currentRankRequest = new QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list?list_id=" + QString::number(currentWeekId)));
-    currentRankReply = manager->get(*currentRankRequest);
+    // QNetworkReply *reply = downloadManager
+    QNetworkRequest currentRankRequest = QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list?list_id=" + QString::number(currentWeekId)));
+    currentRankReply = downloadManager->fetch(currentRankRequest);
     connect(currentRankReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
         if(bytesTotal > 0){
             qDebug() << bytesReceived << "/" << bytesTotal;

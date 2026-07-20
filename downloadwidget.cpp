@@ -11,7 +11,3 @@ DownloadWidget::DownloadWidget(DownloadManager *_downloadManager, QWidget *paren
 
 }
 
-void DownloadWidget::taskFinished(DownloadTask *task)
-{
-
-}

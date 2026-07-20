@@ -4,6 +4,7 @@
 #include "common.h"
 #include "musicitem.h"
 #include "musicitemwidget.h"
+#include "download/downloadmanager.h"
 
 
 struct WeeklyInfo{
@@ -16,14 +17,15 @@ class ExploreWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ExploreWidget(QWidget *parent = nullptr);
+    explicit ExploreWidget(DownloadManager *_downloadManager, QWidget *parent = nullptr);
 private:
 
+    DownloadManager* downloadManager;
     QNetworkAccessManager *manager;
     QVBoxLayout *mainLayout;
     QFont mainFont;
 
-    QNetworkRequest *weeklyIdRequest;
+    // QNetworkRequest *weeklyIdRequest;
     QNetworkReply *weeklyIdReply;
     QFrame* weeklyMusicWidget;
 
@@ -37,7 +39,7 @@ private:
     QVector<QAction*> weeklyActionVector; //每周的action数组
     int currentWeekId = -1;
 //每周音乐部分控件
-    QNetworkRequest *currentRankRequest;
+    // QNetworkRequest *currentRankRequest;
     QNetworkReply *currentRankReply;
     QVector<MusicItem*> currentRankSongs;
     QScrollArea* currentWeekSongsArea;

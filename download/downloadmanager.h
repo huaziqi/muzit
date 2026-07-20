@@ -16,6 +16,7 @@ public:
     };
     explicit DownloadManager(QObject *parent = nullptr);
     DownloadTask* addTask(const QString& url, const QString& savePath);
+    QNetworkReply* fetch(const QNetworkRequest& request);
 
 private:
     QNetworkAccessManager *nam;

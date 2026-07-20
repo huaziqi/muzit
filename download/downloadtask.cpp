@@ -25,7 +25,6 @@ void DownloadTask::start(QNetworkAccessManager *manager)
     reply = manager->get(request);
 
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadTask::progress);
-
     connect(reply, &QNetworkReply::readyRead, this, [this]{
         file->write(reply->readAll());
     });
