@@ -138,8 +138,8 @@ void ExploreWidget::initCurrentWeekMusic(){
 }
 
 void ExploreWidget::getWeeklyHTMLInfo(){
-    QNetworkRequest weeklyIdRequest = QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period?list_type=1")); //获取所有的list_id
-    weeklyIdReply = downloadManager->fetch(weeklyIdRequest);
+
+    weeklyIdReply = downloadManager->fetch(BilibiliApi::weeklyPeriods());
     connect(weeklyIdReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
         if(bytesTotal > 0){
             qDebug() << bytesReceived << "/" << bytesTotal;
@@ -182,9 +182,8 @@ void ExploreWidget::getCurrentWeekRank()
         currentRankSongs.pop_back();
         delete tempItem;
     }
-    // QNetworkReply *reply = downloadManager
-    QNetworkRequest currentRankRequest = QNetworkRequest(QUrl("https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list?list_id=" + QString::number(currentWeekId)));
-    currentRankReply = downloadManager->fetch(currentRankRequest);
+
+    currentRankReply = downloadManager->fetch(BilibiliApi::weeklySongs(currentWeekId));
     connect(currentRankReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
         if(bytesTotal > 0){
             qDebug() << bytesReceived << "/" << bytesTotal;

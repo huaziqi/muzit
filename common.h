@@ -60,6 +60,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QUrlQuery>
 
 namespace common {
     // struct SongInfo{

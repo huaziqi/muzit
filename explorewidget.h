@@ -5,7 +5,7 @@
 #include "musicitem.h"
 #include "musicitemwidget.h"
 #include "download/downloadmanager.h"
-
+#include "api/bilibiliapi.h"
 
 struct WeeklyInfo{
     int ID; // list_id
