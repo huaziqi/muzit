@@ -3,10 +3,12 @@
 
 #include "common.h"
 #include "download/downloadmanager.h"
+#include "bilidltool.h"
 #include "bilitypes.h"
 #include "bilisearchbar.h"
 #include "biliresultlist.h"
 #include "bilisidepanel.h"
+
 
 class BiliDLWidget : public QWidget
 {
@@ -20,6 +22,8 @@ private:
     BiliResultList *resultList;
     BiliSidePanel  *sidePanel;
     DownloadManager *downloadManager;
+
+    BiliDLTool *biliDLTool;
 
     void loadDemoData();
 

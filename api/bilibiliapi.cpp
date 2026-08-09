@@ -48,3 +48,16 @@ QNetworkRequest BilibiliApi::weeklySongs(int listId)
 
     return createRequest(url);
 }
+
+QNetworkRequest BilibiliApi::videoInfoRequest(QString bvid)
+{
+    QUrl url(
+        "https://api.bilibili.com/"
+        "x/web-interface/view"
+        );
+    QUrlQuery query;
+    query.addQueryItem("bvid", bvid);
+    url.setQuery(query);
+    return createRequest(url);
+
+}

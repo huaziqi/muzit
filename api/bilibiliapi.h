@@ -7,6 +7,7 @@ namespace BilibiliApi{
 
     QNetworkRequest weeklyPeriods();
     QNetworkRequest weeklySongs(int listId);
+    QNetworkRequest videoInfoRequest(QString bvid);
 }
 
 #endif // BILIBILIAPI_H

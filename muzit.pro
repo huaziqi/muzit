@@ -8,6 +8,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    api/apiparser.cpp \
     api/bilibiliapi.cpp \
     config.cpp \
     dlpages/bilidltool.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
     titlebar.cpp
 
 HEADERS += \
+    api/apiparser.h \
     api/bilibiliapi.h \
     common.h \
     config.h \

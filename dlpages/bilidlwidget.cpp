@@ -3,6 +3,8 @@
 BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
 {
+    biliDLTool = new BiliDLTool(downloadManager);
+
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
@@ -55,7 +57,11 @@ void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type
 {
     Q_UNUSED(type); Q_UNUSED(pageSize);
     if(type == BiliSearchType::BvId){
-
+        qDebug() << "ok";
+        biliDLTool->getVideoCid(keyword);
+        connect(biliDLTool, &BiliDLTool::cidReady, this, [](const QString& cid){
+            qDebug() << cid;
+        });
     }
 }
 

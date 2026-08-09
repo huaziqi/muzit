@@ -7,7 +7,7 @@ Config& Config::instance(){
 
 Config::Config()
     : m_settings(QSettings::IniFormat, QSettings::UserScope, "transpire", "muzit") {
-    qDebug() << "配置文件路径：" << m_settings.fileName();
+    //qDebug() << "配置文件路径：" << m_settings.fileName();
 }
 
 Config::~Config(){
