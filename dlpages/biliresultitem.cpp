@@ -1,8 +1,14 @@
 #include "biliresultitem.h"
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QListWidget>
 
 BiliResultItem::BiliResultItem(const BiliVideoInfo &info, QWidget *parent)
     : QWidget{parent}, m_info(info)
 {
+    if (m_info.parts.size() == 1)
+        m_info.parts.first().selected = true;
+
     setAttribute(Qt::WA_StyledBackground);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -10,6 +16,7 @@ BiliResultItem::BiliResultItem(const BiliVideoInfo &info, QWidget *parent)
 
     initRow();
     initDetail();
+    refreshPartSelectionState();
 
     mainLayout->addWidget(rowWidget);
     mainLayout->addWidget(detailWidget);
@@ -57,8 +64,15 @@ void BiliResultItem::initRow()
         emit downloadRequested(m_info);
     });
 
+    partSelectBtn = new QPushButton();
+    partSelectBtn->setFixedHeight(24);
+    partSelectBtn->setStyleSheet("font-size: 11px;");
+    connect(partSelectBtn, &QPushButton::clicked,
+            this, &BiliResultItem::showPartSelectionDialog);
+
     rowLayout->addWidget(coverLabel);
     rowLayout->addWidget(textWidget, 1);
+    rowLayout->addWidget(partSelectBtn);
     rowLayout->addWidget(quickDownloadBtn);
 }
 
@@ -145,6 +159,82 @@ void BiliResultItem::setExpanded(bool expanded)
         });
     }
     anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void BiliResultItem::setVideoInfo(const BiliVideoInfo &info)
+{
+    m_info = info;
+    if (m_info.parts.size() == 1)
+        m_info.parts.first().selected = true;
+    refreshPartSelectionState();
+}
+
+void BiliResultItem::showPartSelectionDialog()
+{
+    if (m_info.parts.size() <= 1)
+        return;
+
+    QDialog dialog(this);
+    dialog.setWindowTitle(QStringLiteral("选择要下载的分P"));
+    dialog.setMinimumWidth(360);
+
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+    QLabel *hint = new QLabel(QStringLiteral("可同时选择多个分P"));
+    hint->setStyleSheet("color:#777; font-size:11px;");
+    layout->addWidget(hint);
+
+    QListWidget *list = new QListWidget();
+    for (const BiliPlayUrlInfo &part : m_info.parts) {
+        QListWidgetItem *item = new QListWidgetItem(
+            QStringLiteral("P%1  %2  (%3)")
+                .arg(part.page)
+                .arg(part.title)
+                .arg(formatDuration(part.durationMilliseconds)),
+            list);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        item->setCheckState(part.selected ? Qt::Checked : Qt::Unchecked);
+    }
+    layout->addWidget(list);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    layout->addWidget(buttons);
+
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    for (qsizetype i = 0; i < m_info.parts.size(); ++i)
+        m_info.parts[i].selected = list->item(i)->checkState() == Qt::Checked;
+
+    refreshPartSelectionState();
+    emit partsSelectionChanged(m_info);
+}
+
+void BiliResultItem::refreshPartSelectionState()
+{
+    int selectedCount = 0;
+    bool selectedPartsLoaded = true;
+    for (const BiliPlayUrlInfo &part : m_info.parts) {
+        if (part.selected) {
+            ++selectedCount;
+            if (part.audioStreams.isEmpty())
+                selectedPartsLoaded = false;
+        }
+    }
+
+    const int partCount = m_info.parts.size();
+    partSelectBtn->setEnabled(partCount > 1);
+    partSelectBtn->setText(
+        partCount <= 1
+            ? QStringLiteral("单P")
+            : QStringLiteral("分P %1/%2").arg(selectedCount).arg(partCount));
+
+    const bool canDownload = selectedCount > 0 && selectedPartsLoaded;
+    quickDownloadBtn->setEnabled(canDownload);
+    if (downloadBtn)
+        downloadBtn->setEnabled(canDownload);
 }
 
 void BiliResultItem::mousePressEvent(QMouseEvent *event)

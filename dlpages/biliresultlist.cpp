@@ -64,15 +64,29 @@ void BiliResultList::setResults(const QVector<BiliVideoInfo> &results)
                 this, &BiliResultList::onItemExpandToggled);
         connect(item, &BiliResultItem::downloadRequested,
                 this, &BiliResultList::downloadRequested);
+        connect(item, &BiliResultItem::partsSelectionChanged,
+                this, &BiliResultList::partsSelectionChanged);
         connect(item, &BiliResultItem::favoriteRequested,
                 this, &BiliResultList::favoriteRequested);
         scrollLayout->addWidget(item);
+        resultItems.append(item);
+    }
+}
+
+void BiliResultList::updateVideoInfo(const BiliVideoInfo &info)
+{
+    for (BiliResultItem *item : resultItems) {
+        if (item->videoInfo().bvid == info.bvid) {
+            item->setVideoInfo(info);
+            return;
+        }
     }
 }
 
 void BiliResultList::clear()
 {
     expandedItem = nullptr;
+    resultItems.clear();
     QLayoutItem *child;
     while ((child = scrollLayout->takeAt(0)) != nullptr) {
         if (QWidget *w = child->widget()) {

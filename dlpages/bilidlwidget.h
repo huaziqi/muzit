@@ -25,11 +25,24 @@ private:
 
     BiliDLTool *biliDLTool;
 
+    BiliVideoInfo pendingAudioInfo;
+    BiliVideoInfo queuedAudioInfo;
+    QVector<qint64> pendingAudioCids;
+    bool audioRequestInProgress = false;
+    bool hasQueuedAudioInfo = false;
+
     void loadDemoData();
+    void loadSelectedPartAudio(BiliVideoInfo info);
+    void requestNextPartAudio();
+    void finishPartAudioLoading();
 
 private slots:
     void onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize);
     void onItemSelected(const BiliVideoInfo &info);
+    void onPartsSelectionChanged(const BiliVideoInfo &info);
+    void onVideoInfoReady(const BiliVideoInfo &info);
+    void onPartAudioStreamsReady(const BiliVideoInfo &info);
+    void onPartAudioStreamsFailed(qint64 cid, const QString &error);
     void onDownloadRequested(const BiliVideoInfo &info);
     void onFavoriteRequested(const BiliVideoInfo &info);
 

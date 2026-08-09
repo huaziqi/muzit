@@ -10,6 +10,7 @@ class BiliResultItem : public QWidget
 public:
     explicit BiliResultItem(const BiliVideoInfo &info, QWidget *parent = nullptr);
     void setExpanded(bool expanded);
+    void setVideoInfo(const BiliVideoInfo &info);
     bool isExpanded() const { return m_expanded; }
     const BiliVideoInfo &videoInfo() const { return m_info; }
 
@@ -23,18 +24,21 @@ private:
     QLabel      *coverLabel;
     QLabel      *titleLabel;
     QLabel      *metaLabel;
-    QPushButton *quickDownloadBtn;
+    QPushButton *partSelectBtn = nullptr;
+    QPushButton *quickDownloadBtn = nullptr;
 
     // 展开详情
     QWidget     *detailWidget;
     QHBoxLayout *detailLayout;
     QLabel      *bigCoverLabel;
     QLabel      *infoLabel;
-    QPushButton *downloadBtn;
+    QPushButton *downloadBtn = nullptr;
     QPushButton *favoriteBtn;
 
     void initRow();
     void initDetail();
+    void showPartSelectionDialog();
+    void refreshPartSelectionState();
     static QString formatDuration(qint64 milliseconds);
 
 protected:
@@ -42,6 +46,7 @@ protected:
 
 signals:
     void expandToggled(BiliResultItem *item);
+    void partsSelectionChanged(BiliVideoInfo info);
     void downloadRequested(BiliVideoInfo info);
     void favoriteRequested(BiliVideoInfo info);
 };

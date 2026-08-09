@@ -133,6 +133,9 @@ bool ApiParser::parseVideoInfo(
         return false;
     }
 
+    if (info.parts.size() == 1)
+        info.parts.first().selected = true;
+
     return true;
 }
 

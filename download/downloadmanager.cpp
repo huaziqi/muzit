@@ -9,13 +9,16 @@ DownloadManager::DownloadManager(QObject *parent)
 DownloadTask *DownloadManager::addTask(const QString &url, const QString &savePath)
 {
     DownloadTask *task = new DownloadTask(url, savePath);
-    if(curRTask < maxRTask){
-        task->start(nam);
-        curRTask += 1;
-        connect(task, &DownloadTask::finished, this, [this, task]{
-            taskFinished(task);
-        });
+    connect(task, &DownloadTask::finished, this, [this, task]{
+        taskFinished(task);
+    });
+    connect(task, &DownloadTask::failed, this, [this, task](const QString &){
+        taskFinished(task);
+    });
 
+    if(curRTask < maxRTask){
+        curRTask += 1;
+        task->start(nam);
     } else{
         PendingQueue.append(task);
     }
@@ -30,8 +33,9 @@ QNetworkReply *DownloadManager::fetch(const QNetworkRequest &request){
 void DownloadManager::tryStart()
 {
     if(curRTask < maxRTask && !PendingQueue.empty()){
-        PendingQueue.dequeue()->start(nam);
+        DownloadTask *task = PendingQueue.dequeue();
         curRTask += 1;
+        task->start(nam);
     }
 }
 

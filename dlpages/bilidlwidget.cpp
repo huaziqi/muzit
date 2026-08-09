@@ -1,4 +1,6 @@
 #include "bilidlwidget.h"
+#include <algorithm>
+#include <QRegularExpression>
 
 BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
@@ -36,10 +38,14 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
             this,       &BiliDLWidget::onDownloadRequested);
     connect(resultList, &BiliResultList::favoriteRequested,
             this,       &BiliDLWidget::onFavoriteRequested);
+    connect(resultList, &BiliResultList::partsSelectionChanged,
+            this, &BiliDLWidget::onPartsSelectionChanged);
     connect(biliDLTool, &BiliDLTool::videoInfoReady,
-            this, [](const BiliVideoInfo &info) {
-        qDebug() << info.title << info.author << info.parts.size();
-    });
+            this, &BiliDLWidget::onVideoInfoReady);
+    connect(biliDLTool, &BiliDLTool::partAudioStreamsReady,
+            this, &BiliDLWidget::onPartAudioStreamsReady);
+    connect(biliDLTool, &BiliDLTool::partAudioStreamsFailed,
+            this, &BiliDLWidget::onPartAudioStreamsFailed);
 
     // 加载演示数据
     loadDemoData();
@@ -55,7 +61,12 @@ void BiliDLWidget::loadDemoData()
     first.durationMilliseconds = 222000;
     first.description = "高质量翻唱";
     first.playCount = 124000;
-    first.parts.append({1, 1, first.title, first.durationMilliseconds});
+    BiliPlayUrlInfo firstPart;
+    firstPart.cid = 1;
+    firstPart.page = 1;
+    firstPart.title = first.title;
+    firstPart.durationMilliseconds = first.durationMilliseconds;
+    first.parts.append(firstPart);
     demo.append(first);
 
     BiliVideoInfo second;
@@ -65,7 +76,12 @@ void BiliDLWidget::loadDemoData()
     second.durationMilliseconds = 255000;
     second.description = "钢琴改编，高品质录制";
     second.playCount = 886000;
-    second.parts.append({2, 1, second.title, second.durationMilliseconds});
+    BiliPlayUrlInfo secondPart;
+    secondPart.cid = 2;
+    secondPart.page = 1;
+    secondPart.title = second.title;
+    secondPart.durationMilliseconds = second.durationMilliseconds;
+    second.parts.append(secondPart);
     demo.append(second);
 
     BiliVideoInfo third;
@@ -74,7 +90,12 @@ void BiliDLWidget::loadDemoData()
     third.author = "Jay Official";
     third.durationMilliseconds = 238000;
     third.playCount = 2340000;
-    third.parts.append({3, 1, third.title, third.durationMilliseconds});
+    BiliPlayUrlInfo thirdPart;
+    thirdPart.cid = 3;
+    thirdPart.page = 1;
+    thirdPart.title = third.title;
+    thirdPart.durationMilliseconds = third.durationMilliseconds;
+    third.parts.append(thirdPart);
     demo.append(third);
     resultList->setResults(demo);
 }
@@ -83,35 +104,149 @@ void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type
 {
     Q_UNUSED(type); Q_UNUSED(pageSize);
     if(type == BiliSearchType::BvId){
-
         biliDLTool->getVideoInfo(keyword);
-        connect(biliDLTool, &BiliDLTool::videoInfoReady, this, [=](const BiliVideoInfo& info){
-            biliDLTool->getPartAudioStreams(info, info.parts[0].cid);
-            connect(biliDLTool, &BiliDLTool::partAudioStreamsReady, this, [=](const BiliVideoInfo& info){
-                qDebug() << info.parts[0].audioStreams[0].url;
-            });
-        });
     }
+}
+
+void BiliDLWidget::onVideoInfoReady(const BiliVideoInfo &info)
+{
+    resultList->setResults({info});
 }
 
 void BiliDLWidget::onItemSelected(const BiliVideoInfo &info)
 {
     sidePanel->setSelectedSong(info);
+    loadSelectedPartAudio(info);
+}
+
+void BiliDLWidget::onPartsSelectionChanged(const BiliVideoInfo &info)
+{
+    resultList->updateVideoInfo(info);
+    sidePanel->setSelectedSong(info);
+    loadSelectedPartAudio(info);
+}
+
+void BiliDLWidget::loadSelectedPartAudio(BiliVideoInfo info)
+{
+    if (audioRequestInProgress) {
+        queuedAudioInfo = info;
+        hasQueuedAudioInfo = true;
+        return;
+    }
+
+    pendingAudioInfo = info;
+    pendingAudioCids.clear();
+    for (const BiliPlayUrlInfo &part : pendingAudioInfo.parts) {
+        if (part.selected && part.audioStreams.isEmpty())
+            pendingAudioCids.append(part.cid);
+    }
+
+    if (pendingAudioCids.isEmpty()) {
+        resultList->updateVideoInfo(pendingAudioInfo);
+        sidePanel->setSelectedSong(pendingAudioInfo);
+        return;
+    }
+
+    audioRequestInProgress = true;
+    requestNextPartAudio();
+}
+
+void BiliDLWidget::requestNextPartAudio()
+{
+    if (pendingAudioCids.isEmpty()) {
+        finishPartAudioLoading();
+        return;
+    }
+
+    const qint64 cid = pendingAudioCids.takeFirst();
+    biliDLTool->getPartAudioStreams(pendingAudioInfo, cid);
+}
+
+void BiliDLWidget::onPartAudioStreamsReady(const BiliVideoInfo &info)
+{
+    pendingAudioInfo = info;
+    requestNextPartAudio();
+}
+
+void BiliDLWidget::onPartAudioStreamsFailed(qint64 cid, const QString &error)
+{
+    qWarning() << "Failed to load audio streams for CID" << cid << error;
+    requestNextPartAudio();
+}
+
+void BiliDLWidget::finishPartAudioLoading()
+{
+    audioRequestInProgress = false;
+    resultList->updateVideoInfo(pendingAudioInfo);
+    sidePanel->setSelectedSong(pendingAudioInfo);
+
+    if (!hasQueuedAudioInfo)
+        return;
+
+    BiliVideoInfo nextInfo = queuedAudioInfo;
+    hasQueuedAudioInfo = false;
+
+    for (BiliPlayUrlInfo &nextPart : nextInfo.parts) {
+        for (const BiliPlayUrlInfo &loadedPart : pendingAudioInfo.parts) {
+            if (nextPart.cid == loadedPart.cid && nextPart.audioStreams.isEmpty()) {
+                nextPart.audioStreams = loadedPart.audioStreams;
+                break;
+            }
+        }
+    }
+
+    loadSelectedPartAudio(nextInfo);
 }
 
 void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
 {
-    // 占位：后续接入真实下载
-    sidePanel->addDownloadTask(info.title);
-    qDebug() << "[BiliDLWidget] download:" << info.bvid;
+    const BiliSaveSettings settings = sidePanel->currentSettings();
+    const int qualityId = settings.quality.toInt();
+    const int selectedPartCount = std::count_if(
+        info.parts.cbegin(), info.parts.cend(),
+        [](const BiliPlayUrlInfo &part) { return part.selected; });
+
+    for (const BiliPlayUrlInfo &part : info.parts) {
+        if (!part.selected)
+            continue;
+
+        const auto audioIt = std::find_if(
+            part.audioStreams.cbegin(), part.audioStreams.cend(),
+            [qualityId](const BiliAudioStream &audio) {
+                return audio.id == qualityId;
+            });
+        if (audioIt == part.audioStreams.cend()) {
+            qWarning() << "Selected quality is unavailable for CID" << part.cid;
+            continue;
+        }
+
+        QString fileName = settings.fileNameTemplate;
+        fileName.replace("{title}", info.title);
+        fileName.replace("{author}", info.author);
+        if (selectedPartCount > 1 || info.parts.size() > 1) {
+            fileName += QStringLiteral(" - P%1 %2")
+                            .arg(part.page)
+                            .arg(part.title);
+        }
+        fileName.replace(QRegularExpression(R"([<>:"/\\|?*])"), "_");
+        fileName = fileName.trimmed();
+        if (fileName.isEmpty())
+            fileName = info.bvid + QStringLiteral("-P%1").arg(part.page);
+
+        const QString savePath =
+            QDir(settings.savePath).filePath(fileName + ".m4s");
+        DownloadTask *task = biliDLTool->downloadAudio(audioIt->url, savePath);
+        sidePanel->addDownloadTask(
+            QStringLiteral("P%1 %2 · %3")
+                .arg(part.page)
+                .arg(part.title)
+                .arg(audioIt->qualityDescription),
+            task);
+    }
 }
 
 void BiliDLWidget::onFavoriteRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入收藏逻辑
     qDebug() << "[BiliDLWidget] favorite:" << info.bvid;
-}
-
-void onSettingsChanged(BiliSaveSettings settings){
-
 }

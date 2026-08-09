@@ -11,6 +11,7 @@ class BiliResultList : public QWidget
 public:
     explicit BiliResultList(QWidget *parent = nullptr);
     void setResults(const QVector<BiliVideoInfo> &results);
+    void updateVideoInfo(const BiliVideoInfo &info);
     void clear();
 
 private:
@@ -25,6 +26,7 @@ private:
     QVector<QPushButton *> pageButtons;
 
     BiliResultItem  *expandedItem = nullptr;
+    QVector<BiliResultItem *> resultItems;
 
     void initScrollArea();
     void initPagination();
@@ -34,6 +36,7 @@ private slots:
 
 signals:
     void itemSelected(BiliVideoInfo info);
+    void partsSelectionChanged(BiliVideoInfo info);
     void downloadRequested(BiliVideoInfo info);
     void favoriteRequested(BiliVideoInfo info);
 };

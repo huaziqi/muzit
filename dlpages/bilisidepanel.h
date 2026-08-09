@@ -5,14 +5,17 @@
 #include "bilitypes.h"
 #include "config.h"
 
+class DownloadTask;
+
 class BiliSidePanel : public QWidget
 {
     Q_OBJECT
 public:
     explicit BiliSidePanel(QWidget *parent = nullptr);
     void setSelectedSong(const BiliVideoInfo &info);
+    void updateAvailableQualities(const BiliVideoInfo &info);
     BiliSaveSettings currentSettings() const;
-    void addDownloadTask(const QString &title);
+    void addDownloadTask(const QString &title, DownloadTask *task);
 
 private:
     QVBoxLayout *mainLayout;
@@ -45,7 +48,7 @@ private:
     //配置存储信息
     QString defaultPath;
     const QString defaultTemplate = "{title} - {author}";
-    const QString defaultQaulity = "320kbps";
+    const QString defaultQaulity = "30280";
 
 private slots:
     void onBrowseClicked();

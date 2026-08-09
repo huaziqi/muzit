@@ -1,5 +1,8 @@
 #include "bilisidepanel.h"
 #include <QFileDialog>
+#include <QSet>
+#include <QStandardItemModel>
+#include "download/downloadtask.h"
 
 BiliSidePanel::BiliSidePanel(QWidget *parent)
     : QWidget{parent}
@@ -72,9 +75,11 @@ void BiliSidePanel::initSaveSettings()
     qualTitle->setStyleSheet("font-size: 11px; color: #666;");
     mainLayout->addWidget(qualTitle);
     qualityBox = new QComboBox();
-    qualityBox->addItem("320 kbps",  "320kbps");
-    qualityBox->addItem("192 kbps",  "192kbps");
-    qualityBox->addItem("Hi-Res",    "hires");
+    qualityBox->addItem("Hi-Res 无损", 30251);
+    qualityBox->addItem("杜比全景声", 30250);
+    qualityBox->addItem("192K", 30280);
+    qualityBox->addItem("132K", 30232);
+    qualityBox->addItem("64K", 30216);
     qualityBox->setFixedHeight(24);
     mainLayout->addWidget(qualityBox);
     connect(qualityBox, &QComboBox::currentIndexChanged, this, [this]() {
@@ -82,13 +87,14 @@ void BiliSidePanel::initSaveSettings()
     });
 
     initConfig();
+    updateAvailableQualities(BiliVideoInfo{});
 }
 
 void BiliSidePanel::initConfig(){
     pathLabel->setText(Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::SavePathKey, defaultPath).toString());
     templateInput->setText(Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::FileNameTemplateKey, defaultTemplate).toString());
     QString quality = Config::instance().getValuewithGroup(configGroup, BiliSaveSettings::QualityKey, defaultQaulity).toString();
-    int idx = qualityBox->findData(quality);
+    int idx = qualityBox->findData(quality.toInt());
     if(idx >= 0){
         qualityBox->setCurrentIndex(idx);
     }
@@ -143,6 +149,50 @@ void BiliSidePanel::setSelectedSong(const BiliVideoInfo &info)
     selectedSongLabel->setText(info.title);
     selectedSongLabel->setStyleSheet("font-size: 10px; color: #333;");
     favoriteBtn->setEnabled(true);
+    updateAvailableQualities(info);
+}
+
+void BiliSidePanel::updateAvailableQualities(const BiliVideoInfo &info)
+{
+    QSet<int> commonQualities;
+    bool hasSelectedPart = false;
+    bool firstSelectedPart = true;
+
+    for (const BiliPlayUrlInfo &part : info.parts) {
+        if (!part.selected)
+            continue;
+
+        hasSelectedPart = true;
+        QSet<int> partQualities;
+        for (const BiliAudioStream &audio : part.audioStreams)
+            partQualities.insert(audio.id);
+
+        if (firstSelectedPart) {
+            commonQualities = partQualities;
+            firstSelectedPart = false;
+        } else {
+            commonQualities.intersect(partQualities);
+        }
+    }
+
+    QStandardItemModel *model =
+        qobject_cast<QStandardItemModel *>(qualityBox->model());
+    int firstEnabledIndex = -1;
+    for (int i = 0; i < qualityBox->count(); ++i) {
+        const bool enabled =
+            hasSelectedPart && commonQualities.contains(qualityBox->itemData(i).toInt());
+        if (QStandardItem *item = model ? model->item(i) : nullptr)
+            item->setEnabled(enabled);
+        if (enabled && firstEnabledIndex < 0)
+            firstEnabledIndex = i;
+    }
+
+    qualityBox->setEnabled(firstEnabledIndex >= 0);
+    if (firstEnabledIndex >= 0) {
+        const int currentId = qualityBox->currentData().toInt();
+        if (!commonQualities.contains(currentId))
+            qualityBox->setCurrentIndex(firstEnabledIndex);
+    }
 }
 
 BiliSaveSettings BiliSidePanel::currentSettings() const
@@ -150,11 +200,11 @@ BiliSaveSettings BiliSidePanel::currentSettings() const
     return BiliSaveSettings{
         pathLabel->text(),
         templateInput->text(),
-        qualityBox->currentData().toString()
+        QString::number(qualityBox->currentData().toInt())
     };
 }
 
-void BiliSidePanel::addDownloadTask(const QString &title)
+void BiliSidePanel::addDownloadTask(const QString &title, DownloadTask *task)
 {
     QWidget *taskRow = new QWidget();
     QVBoxLayout *rowLayout = new QVBoxLayout(taskRow);
@@ -174,6 +224,21 @@ void BiliSidePanel::addDownloadTask(const QString &title)
     rowLayout->addWidget(taskLabel);
     rowLayout->addWidget(bar);
     queueLayout->addWidget(taskRow);
+
+    connect(task, &DownloadTask::progress, taskRow,
+            [bar](qint64 received, qint64 total) {
+        if (total > 0)
+            bar->setValue(static_cast<int>(received * 100 / total));
+    });
+    connect(task, &DownloadTask::finished, taskRow, [taskLabel, bar] {
+        bar->setValue(100);
+        taskLabel->setText(taskLabel->text() + QStringLiteral("  已完成"));
+    });
+    connect(task, &DownloadTask::failed, taskRow,
+            [taskLabel](const QString &error) {
+        taskLabel->setText(
+            taskLabel->text() + QStringLiteral("  失败：") + error);
+    });
 }
 
 void BiliSidePanel::onBrowseClicked()

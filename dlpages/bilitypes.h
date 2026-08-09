@@ -25,6 +25,7 @@ struct BiliPlayUrlInfo
     int page = 0;
     QString title;
     qint64 durationMilliseconds = 0;
+    bool selected = false;
     QVector<BiliAudioStream> audioStreams;
 };
 
