@@ -35,7 +35,7 @@ private:
 
     void initRow();
     void initDetail();
-    static QString formatDuration(int seconds);
+    static QString formatDuration(qint64 milliseconds);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

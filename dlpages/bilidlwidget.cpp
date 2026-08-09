@@ -36,6 +36,10 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
             this,       &BiliDLWidget::onDownloadRequested);
     connect(resultList, &BiliResultList::favoriteRequested,
             this,       &BiliDLWidget::onFavoriteRequested);
+    connect(biliDLTool, &BiliDLTool::videoInfoReady,
+            this, [](const BiliVideoInfo &info) {
+        qDebug() << info.title << info.author << info.parts.size();
+    });
 
     // 加载演示数据
     loadDemoData();
@@ -44,12 +48,34 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
 void BiliDLWidget::loadDemoData()
 {
     QVector<BiliVideoInfo> demo;
-    demo.append({"BV1xx411x7aa", "青花瓷 翻唱版 - 完整版本", "某某某",
-                 "", 222, 1, "高质量翻唱", 124000});
-    demo.append({"BV1xx411x7bb", "晴天 - 周杰伦（钢琴版）", "钢琴君",
-                 "", 255, 1, "钢琴改编，高品质录制", 886000});
-    demo.append({"BV1xx411x7cc", "稻香 官方MV 完整版", "Jay Official",
-                 "", 238, 1, "", 2340000});
+    BiliVideoInfo first;
+    first.bvid = "BV1xx411x7aa";
+    first.title = "青花瓷 翻唱版 - 完整版本";
+    first.author = "某某某";
+    first.durationMilliseconds = 222000;
+    first.description = "高质量翻唱";
+    first.playCount = 124000;
+    first.parts.append({1, 1, first.title, first.durationMilliseconds});
+    demo.append(first);
+
+    BiliVideoInfo second;
+    second.bvid = "BV1xx411x7bb";
+    second.title = "晴天 - 周杰伦（钢琴版）";
+    second.author = "钢琴君";
+    second.durationMilliseconds = 255000;
+    second.description = "钢琴改编，高品质录制";
+    second.playCount = 886000;
+    second.parts.append({2, 1, second.title, second.durationMilliseconds});
+    demo.append(second);
+
+    BiliVideoInfo third;
+    third.bvid = "BV1xx411x7cc";
+    third.title = "稻香 官方MV 完整版";
+    third.author = "Jay Official";
+    third.durationMilliseconds = 238000;
+    third.playCount = 2340000;
+    third.parts.append({3, 1, third.title, third.durationMilliseconds});
+    demo.append(third);
     resultList->setResults(demo);
 }
 
@@ -57,10 +83,13 @@ void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type
 {
     Q_UNUSED(type); Q_UNUSED(pageSize);
     if(type == BiliSearchType::BvId){
-        qDebug() << "ok";
-        biliDLTool->getVideoCid(keyword);
-        connect(biliDLTool, &BiliDLTool::cidReady, this, [](const QString& cid){
-            qDebug() << cid;
+
+        biliDLTool->getVideoInfo(keyword);
+        connect(biliDLTool, &BiliDLTool::videoInfoReady, this, [=](const BiliVideoInfo& info){
+            biliDLTool->getPartAudioStreams(info, info.parts[0].cid);
+            connect(biliDLTool, &BiliDLTool::partAudioStreamsReady, this, [=](const BiliVideoInfo& info){
+                qDebug() << info.parts[0].audioStreams[0].url;
+            });
         });
     }
 }
@@ -74,13 +103,13 @@ void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入真实下载
     sidePanel->addDownloadTask(info.title);
-    qDebug() << "[BiliDLWidget] download:" << info.bvId;
+    qDebug() << "[BiliDLWidget] download:" << info.bvid;
 }
 
 void BiliDLWidget::onFavoriteRequested(const BiliVideoInfo &info)
 {
     // 占位：后续接入收藏逻辑
-    qDebug() << "[BiliDLWidget] favorite:" << info.bvId;
+    qDebug() << "[BiliDLWidget] favorite:" << info.bvid;
 }
 
 void onSettingsChanged(BiliSaveSettings settings){

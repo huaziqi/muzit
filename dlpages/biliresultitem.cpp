@@ -42,7 +42,7 @@ void BiliResultItem::initRow()
 
     QString meta = QString("UP主：%1  ·  %2  ·  播放量 %3")
                        .arg(m_info.author)
-                       .arg(formatDuration(m_info.duration))
+                       .arg(formatDuration(m_info.durationMilliseconds))
                        .arg(m_info.playCount);
     metaLabel = new QLabel(meta);
     metaLabel->setStyleSheet("font-size: 10px; color: #888;");
@@ -81,9 +81,9 @@ void BiliResultItem::initDetail()
         "<b>BV号：</b>%1<br>"
         "<b>时长：</b>%2 &nbsp; <b>分P：</b>%3 P<br>"
         "<b>简介：</b>%4")
-            .arg(m_info.bvId)
-            .arg(formatDuration(m_info.duration))
-            .arg(m_info.partCount)
+            .arg(m_info.bvid)
+            .arg(formatDuration(m_info.durationMilliseconds))
+            .arg(m_info.parts.size())
             .arg(m_info.description.isEmpty() ? "暂无简介" : m_info.description);
     infoLabel = new QLabel(infoText);
     infoLabel->setStyleSheet("font-size: 11px; color: #555;");
@@ -161,9 +161,10 @@ void BiliResultItem::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
-QString BiliResultItem::formatDuration(int seconds)
+QString BiliResultItem::formatDuration(qint64 milliseconds)
 {
-    int m = seconds / 60;
-    int s = seconds % 60;
+    const qint64 seconds = milliseconds / 1000;
+    const qint64 m = seconds / 60;
+    const qint64 s = seconds % 60;
     return QString("%1:%2").arg(m).arg(s, 2, 10, QChar('0'));
 }

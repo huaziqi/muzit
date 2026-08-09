@@ -1,28 +1,57 @@
 #ifndef BILITYPES_H
 #define BILITYPES_H
 
+#include <QMetaType>
 #include <QString>
+#include <QStringList>
+#include <QVector>
 
 enum class BiliSearchType { Keyword, BvId };
 
-struct BiliVideoInfo {
-    QString bvId;
+struct BiliAudioStream
+{
+    int id = 0;
+    QString qualityDescription;
+    QString url;
+    QStringList backupUrls;
+    qint64 bandwidth = 0;
+    QString mimeType;
+    QString codecs;
+};
+
+struct BiliPlayUrlInfo
+{
+    qint64 cid = 0;
+    int page = 0;
+    QString title;
+    qint64 durationMilliseconds = 0;
+    QVector<BiliAudioStream> audioStreams;
+};
+
+struct BiliVideoInfo
+{
+    QString bvid;
     QString title;
     QString author;
     QString coverUrl;
-    int duration;   // 秒
-    int partCount;
+    qint64 durationMilliseconds = 0;
     QString description;
-    int playCount;
+    qint64 playCount = 0;
+    QVector<BiliPlayUrlInfo> parts;
 };
 
-struct BiliSaveSettings {
+struct BiliSaveSettings
+{
     QString savePath;
-    static constexpr const char* SavePathKey = "savePath";
-    QString fileNameTemplate;  // 支持 {title} {author}
-    static constexpr const char* FileNameTemplateKey = "fileNameTemplate";
-    QString quality;           // "320kbps" / "192kbps" / "hires"
-    static constexpr const char* QualityKey = "quality";
+    static constexpr const char *SavePathKey = "savePath";
+    QString fileNameTemplate;
+    static constexpr const char *FileNameTemplateKey = "fileNameTemplate";
+    QString quality;
+    static constexpr const char *QualityKey = "quality";
 };
+
+Q_DECLARE_METATYPE(BiliAudioStream)
+Q_DECLARE_METATYPE(BiliPlayUrlInfo)
+Q_DECLARE_METATYPE(BiliVideoInfo)
 
 #endif // BILITYPES_H

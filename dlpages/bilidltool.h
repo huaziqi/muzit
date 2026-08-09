@@ -13,12 +13,21 @@ private:
     DownloadManager *downloadManager;
 
 public:
+    explicit BiliDLTool(
+        DownloadManager *_downloadManager,
+        QObject *parent = nullptr);
 
-    explicit BiliDLTool(DownloadManager *_downloadManager, QObject *parent = nullptr);
-    void getVideoCid(QString bvid);
+    void getVideoInfo(const QString &bvid);
+    void getPartAudioStreams(BiliVideoInfo videoInfo, qint64 cid);
+    DownloadTask *downloadAudio(
+        const QString &audioUrl,
+        const QString &savePath);
+
 signals:
-    void cidReady(qint64 cid);
-    void cidFailed(QString error);
+    void videoInfoReady(BiliVideoInfo info);
+    void videoInfoFailed(QString error);
+    void partAudioStreamsReady(BiliVideoInfo videoInfo);
+    void partAudioStreamsFailed(qint64 cid, QString error);
 };
 
 #endif // BILIDLTOOL_H

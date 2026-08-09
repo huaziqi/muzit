@@ -61,3 +61,26 @@ QNetworkRequest BilibiliApi::videoInfoRequest(QString bvid)
     return createRequest(url);
 
 }
+
+QNetworkRequest BilibiliApi::playUrlRequest(const QString &bvid, qint64 cid)
+{
+    QUrl url(
+        "https://api.bilibili.com/"
+        "x/player/playurl"
+        );
+
+    QUrlQuery query;
+    query.addQueryItem("bvid", bvid);
+    query.addQueryItem("cid", QString::number(cid));
+    query.addQueryItem("fnval", "16");
+    query.addQueryItem("fnver", "0");
+    query.addQueryItem("otype", "json");
+    url.setQuery(query);
+
+    QNetworkRequest request = createRequest(url);
+    request.setRawHeader(
+        QByteArrayLiteral("Referer"),
+        QByteArrayLiteral("https://www.bilibili.com")
+        );
+    return request;
+}
