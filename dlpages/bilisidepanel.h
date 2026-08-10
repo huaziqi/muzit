@@ -54,6 +54,7 @@ private slots:
     void onBrowseClicked();
     void onSettingsChanged(const BiliSaveSettings& settings);
 
+
 signals:
     void saveSettingsChanged(const BiliSaveSettings& settings);
     void favoriteRequested(BiliVideoInfo info);

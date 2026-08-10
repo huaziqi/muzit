@@ -9,6 +9,7 @@ class BiliSearchBar : public QWidget
     Q_OBJECT
 public:
     explicit BiliSearchBar(QWidget *parent = nullptr);
+    void searchFinished(const QString& error = "");
 
 private:
     QHBoxLayout *mainLayout;
@@ -21,6 +22,7 @@ private:
 
 private slots:
     void onSearchClicked();
+
 
 signals:
     void searchRequested(const QString &keyword, BiliSearchType type, int pageSize);

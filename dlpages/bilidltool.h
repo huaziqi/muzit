@@ -18,7 +18,7 @@ public:
         QObject *parent = nullptr);
 
     void getVideoInfo(const QString &bvid);
-    void getPartAudioStreams(BiliVideoInfo videoInfo, qint64 cid);
+    void getPartAudioStreams(BiliPlayUrlInfo playUrlInfo, QString bvid, qint64 index);
     DownloadTask *downloadAudio(
         const QString &audioUrl,
         const QString &savePath);
@@ -26,7 +26,7 @@ public:
 signals:
     void videoInfoReady(BiliVideoInfo info);
     void videoInfoFailed(QString error);
-    void partAudioStreamsReady(BiliVideoInfo videoInfo);
+    void partAudioStreamsReady(BiliPlayUrlInfo playUrlInfo, qint64 index);
     void partAudioStreamsFailed(qint64 cid, QString error);
 };
 

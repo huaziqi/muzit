@@ -50,11 +50,20 @@ BiliSearchBar::BiliSearchBar(QWidget *parent)
     mainLayout->addWidget(tiao);
 }
 
+void BiliSearchBar::searchFinished(const QString &error)
+{
+    if(error == ""){
+        searchBtn->setDisabled(false);
+    }
+}
+
 void BiliSearchBar::onSearchClicked()
 {
+    searchBtn->setDisabled(true);
     QString keyword = searchInput->text().trimmed();
     if (keyword.isEmpty()) return;
     auto type = static_cast<BiliSearchType>(typeGroup->checkedId());
     int pageSize = pageSizeBox->currentText().toInt();
     emit searchRequested(keyword, type, pageSize);
 }
+

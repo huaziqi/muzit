@@ -71,6 +71,7 @@ void BiliResultList::setResults(const QVector<BiliVideoInfo> &results)
         scrollLayout->addWidget(item);
         resultItems.append(item);
     }
+
 }
 
 void BiliResultList::updateVideoInfo(const BiliVideoInfo &info)
@@ -83,6 +84,7 @@ void BiliResultList::updateVideoInfo(const BiliVideoInfo &info)
     }
 }
 
+//清除列表
 void BiliResultList::clear()
 {
     expandedItem = nullptr;
@@ -96,6 +98,7 @@ void BiliResultList::clear()
     }
 }
 
+//展开
 void BiliResultList::onItemExpandToggled(BiliResultItem *item)
 {
     // expandToggled fires before BiliResultItem updates m_expanded,

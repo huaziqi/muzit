@@ -48,7 +48,7 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
             this, &BiliDLWidget::onPartAudioStreamsFailed);
 
     // 加载演示数据
-    loadDemoData();
+    //loadDemoData();
 }
 
 void BiliDLWidget::loadDemoData()
@@ -102,6 +102,7 @@ void BiliDLWidget::loadDemoData()
 
 void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize)
 {
+    curPageSize = pageSize;
     Q_UNUSED(type); Q_UNUSED(pageSize);
     if(type == BiliSearchType::BvId){
         biliDLTool->getVideoInfo(keyword);
@@ -110,13 +111,14 @@ void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type
 
 void BiliDLWidget::onVideoInfoReady(const BiliVideoInfo &info)
 {
+    searchBar->searchFinished();
     resultList->setResults({info});
+    loadSelectedPartAudio(info);
 }
 
 void BiliDLWidget::onItemSelected(const BiliVideoInfo &info)
 {
     sidePanel->setSelectedSong(info);
-    loadSelectedPartAudio(info);
 }
 
 void BiliDLWidget::onPartsSelectionChanged(const BiliVideoInfo &info)
@@ -129,42 +131,40 @@ void BiliDLWidget::onPartsSelectionChanged(const BiliVideoInfo &info)
 void BiliDLWidget::loadSelectedPartAudio(BiliVideoInfo info)
 {
     if (audioRequestInProgress) {
-        queuedAudioInfo = info;
+        queuedAudioInfo.append(info);
         hasQueuedAudioInfo = true;
         return;
     }
 
     pendingAudioInfo = info;
-    pendingAudioCids.clear();
+    pendingAudioIndex.clear();
+    int i = 0;
     for (const BiliPlayUrlInfo &part : pendingAudioInfo.parts) {
         if (part.selected && part.audioStreams.isEmpty())
-            pendingAudioCids.append(part.cid);
+            pendingAudioIndex.append(i);
+        i ++;
     }
-
-    if (pendingAudioCids.isEmpty()) {
-        resultList->updateVideoInfo(pendingAudioInfo);
-        sidePanel->setSelectedSong(pendingAudioInfo);
+    if (pendingAudioIndex.isEmpty()) {
         return;
     }
-
     audioRequestInProgress = true;
     requestNextPartAudio();
 }
 
 void BiliDLWidget::requestNextPartAudio()
 {
-    if (pendingAudioCids.isEmpty()) {
+    if (pendingAudioIndex.isEmpty()) {
         finishPartAudioLoading();
         return;
     }
 
-    const qint64 cid = pendingAudioCids.takeFirst();
-    biliDLTool->getPartAudioStreams(pendingAudioInfo, cid);
+    const qint64 index = pendingAudioIndex.takeFirst();
+    biliDLTool->getPartAudioStreams(pendingAudioInfo.parts[index], pendingAudioInfo.bvid, index);
 }
 
-void BiliDLWidget::onPartAudioStreamsReady(const BiliVideoInfo &info)
+void BiliDLWidget::onPartAudioStreamsReady(const BiliPlayUrlInfo &info, qint64 index)
 {
-    pendingAudioInfo = info;
+    pendingAudioInfo.parts[index] = info;
     requestNextPartAudio();
 }
 
@@ -178,22 +178,13 @@ void BiliDLWidget::finishPartAudioLoading()
 {
     audioRequestInProgress = false;
     resultList->updateVideoInfo(pendingAudioInfo);
-    sidePanel->setSelectedSong(pendingAudioInfo);
 
     if (!hasQueuedAudioInfo)
         return;
 
-    BiliVideoInfo nextInfo = queuedAudioInfo;
-    hasQueuedAudioInfo = false;
-
-    for (BiliPlayUrlInfo &nextPart : nextInfo.parts) {
-        for (const BiliPlayUrlInfo &loadedPart : pendingAudioInfo.parts) {
-            if (nextPart.cid == loadedPart.cid && nextPart.audioStreams.isEmpty()) {
-                nextPart.audioStreams = loadedPart.audioStreams;
-                break;
-            }
-        }
-    }
+    BiliVideoInfo nextInfo = queuedAudioInfo.takeFirst();
+    if(queuedAudioInfo.isEmpty())
+        hasQueuedAudioInfo = false;
 
     loadSelectedPartAudio(nextInfo);
 }

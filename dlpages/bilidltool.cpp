@@ -32,48 +32,29 @@ void BiliDLTool::getVideoInfo(const QString &bvid)
     });
 }
 
-void BiliDLTool::getPartAudioStreams(BiliVideoInfo videoInfo, qint64 cid)
+void BiliDLTool::getPartAudioStreams(BiliPlayUrlInfo playUrlInfo, QString bvid, qint64 index)
 {
-    if (cid <= 0) {
-        emit partAudioStreamsFailed(cid, QStringLiteral("CID无效"));
-        return;
-    }
-
-    qsizetype partIndex = -1;
-    for (qsizetype i = 0; i < videoInfo.parts.size(); ++i) {
-        if (videoInfo.parts.at(i).cid == cid) {
-            partIndex = i;
-            break;
-        }
-    }
-
-    if (partIndex < 0) {
-        emit partAudioStreamsFailed(
-            cid, QStringLiteral("VideoInfo中找不到对应的CID"));
-        return;
-    }
-
     QNetworkReply *reply = downloadManager->fetch(
-        BilibiliApi::playUrlRequest(videoInfo.bvid, cid));
+        BilibiliApi::playUrlRequest(bvid, playUrlInfo.cid));
 
     connect(reply, &QNetworkReply::finished, this,
-            [this, reply, videoInfo, partIndex, cid]() mutable {
+            [this, reply, playUrlInfo, index]() mutable {
         if (reply->error() != QNetworkReply::NoError) {
-            emit partAudioStreamsFailed(cid, reply->errorString());
+            emit partAudioStreamsFailed(playUrlInfo.cid, reply->errorString());
             reply->deleteLater();
             return;
         }
 
         QString error;
         if (!ApiParser::parsePlayUrlInfo(
-                reply->readAll(), videoInfo.parts[partIndex], error)) {
-            emit partAudioStreamsFailed(cid, error);
+                reply->readAll(), playUrlInfo, error)) {
+            emit partAudioStreamsFailed(playUrlInfo.cid, error);
             reply->deleteLater();
             return;
         }
 
         reply->deleteLater();
-        emit partAudioStreamsReady(videoInfo);
+        emit partAudioStreamsReady(playUrlInfo, index);
     });
 }
 
