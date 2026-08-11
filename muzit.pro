@@ -11,6 +11,7 @@ SOURCES += \
     api/apiparser.cpp \
     api/bilibiliapi.cpp \
     config.cpp \
+    dlpages/biliaudiometadatadialog.cpp \
     dlpages/bilidltool.cpp \
     dlpages/bilidlwidget.cpp \
     dlpages/bilisearchbar.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     api/bilibiliapi.h \
     common.h \
     config.h \
+    dlpages/biliaudiometadatadialog.h \
     dlpages/bilidltool.h \
     dlpages/bilidlwidget.h \
     dlpages/bilitypes.h \

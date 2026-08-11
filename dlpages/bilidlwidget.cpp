@@ -1,24 +1,5 @@
 #include "bilidlwidget.h"
-#include <algorithm>
-#include <QRegularExpression>
-
-namespace {
-
-QString outputSuffix(AudioOutputFormat format)
-{
-    switch (format) {
-    case AudioOutputFormat::M4a:
-        return QStringLiteral("m4a");
-    case AudioOutputFormat::Mp3:
-        return QStringLiteral("mp3");
-    case AudioOutputFormat::Flac:
-        return QStringLiteral("flac");
-    }
-
-    return QStringLiteral("m4a");
-}
-
-}
+#include "biliaudiometadatadialog.h"
 
 BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
@@ -161,59 +142,38 @@ void BiliDLWidget::finishPartAudioLoading()
 void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
 {
     const BiliSaveSettings settings = sidePanel->currentSettings();
-    const int qualityId = settings.quality.toInt();
-    const int selectedPartCount = std::count_if(
-        info.parts.cbegin(), info.parts.cend(),
-        [](const BiliPlayUrlInfo &part) { return part.selected; });
+    QVector<int> selectedPartIndexes;
+    for (qsizetype i = 0; i < info.parts.size(); ++i) {
+        if (info.parts.at(i).selected)
+            selectedPartIndexes.append(static_cast<int>(i));
+    }
+    if (selectedPartIndexes.isEmpty())
+        return;
 
-    for (const BiliPlayUrlInfo &part : info.parts) {
+    BiliAudioMetadataDialog dialog(info, selectedPartIndexes, this);
+    if (dialog.exec() != QDialog::Accepted)
+        return;
 
-        if (!part.selected)
-            continue;
-        AudioDownloadJob curJob;
-        const auto audioIt = std::find_if(
-            part.audioStreams.cbegin(), part.audioStreams.cend(),
-            [qualityId](const BiliAudioStream &audio) {
-                return audio.id == qualityId;
-            });
-        if (audioIt == part.audioStreams.cend()) {
-            qWarning() << "Selected quality is unavailable for CID" << part.cid;
+    const QVector<AudioMetadata> metadata = dialog.metadata();
+    for (qsizetype i = 0; i < selectedPartIndexes.size(); ++i) {
+        const BiliPlayUrlInfo &part =
+            info.parts.at(selectedPartIndexes.at(i));
+        AudioDownloadJob job;
+        QString error;
+        if (!biliDLTool->createAudioDownloadJob(
+                info, part, settings, metadata.at(i), job, error)) {
+            qWarning() << "Failed to prepare audio download for CID"
+                       << part.cid << error;
             continue;
         }
 
-        QString fileName = settings.fileNameTemplate;
-        fileName.replace("{title}", info.title);
-        fileName.replace("{author}", info.author);
-        if (selectedPartCount > 1 || info.parts.size() > 1) {
-            fileName += QStringLiteral(" - P%1 %2")
-                            .arg(part.page)
-                            .arg(part.title);
-        }
-        fileName.replace(QRegularExpression(R"([<>:"/\\|?*])"), "_");
-        fileName = fileName.trimmed();
-        if (fileName.isEmpty())
-            fileName = info.bvid + QStringLiteral("-P%1").arg(part.page);
-
-        curJob.bvid = info.bvid;
-        curJob.cid = part.cid;
-        curJob.page = part.page;
-        curJob.source = *audioIt;
-        curJob.metadata.title =
-            info.parts.size() > 1 ? part.title : info.title;
-        curJob.metadata.artist = info.author;
-        curJob.metadata.coverUrl = info.coverUrl;
-        curJob.outputFormat = settings.outputFormat;
-        curJob.temporaryPath =
-            QDir(settings.savePath).filePath(fileName + ".m4s");
-        curJob.outputPath = QDir(settings.savePath).filePath(
-            fileName + "." + outputSuffix(curJob.outputFormat));
-
-        DownloadTask *task = biliDLTool->downloadAudio(curJob);
+        DownloadTask *task = biliDLTool->downloadAudio(job);
         sidePanel->addDownloadTask(
-            QStringLiteral("P%1 %2 · %3")
+            QStringLiteral("P%1 %2 · %3 · %4")
                 .arg(part.page)
-                .arg(part.title)
-                .arg(audioIt->qualityDescription),
+                .arg(job.metadata.title)
+                .arg(job.metadata.artist)
+                .arg(job.source.qualityDescription),
             task);
     }
 }

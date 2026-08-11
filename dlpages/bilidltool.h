@@ -19,6 +19,13 @@ public:
 
     void getVideoInfo(const QString &bvid);
     void getPartAudioStreams(BiliPlayUrlInfo playUrlInfo, QString bvid, qint64 index);
+    bool createAudioDownloadJob(
+        const BiliVideoInfo &videoInfo,
+        const BiliPlayUrlInfo &part,
+        const BiliSaveSettings &settings,
+        const AudioMetadata &metadata,
+        AudioDownloadJob &job,
+        QString &error) const;
     DownloadTask *downloadAudio(const AudioDownloadJob &job);
 
 signals:
