@@ -60,5 +60,4 @@ INCLUDEPATH += $$PWD/dlpages
 include($$PWD/musicItem/musicItemMoudle.pri)
 include($$PWD/audio/audio.pri)
 
-DISTFILES += \
-    audio/audio.pri
+

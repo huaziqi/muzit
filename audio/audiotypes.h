@@ -2,6 +2,7 @@
 #define AUDIOTYPES_H
 
 #include <QString>
+#include <QMetaType>
 
 enum class AudioOutputFormat
 {
@@ -28,5 +29,7 @@ struct AudioInfo
     int sampleRate = 0;
     int channels = 0;
 };
+
+Q_DECLARE_METATYPE(AudioConvertOptions);
 
 #endif // AUDIOTYPES_H

@@ -1,4 +1,5 @@
 #include "downloadwidget.h"
+#include "audio/audioprocessor.h"
 
 DownloadWidget::DownloadWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
@@ -8,6 +9,11 @@ DownloadWidget::DownloadWidget(DownloadManager *_downloadManager, QWidget *paren
     mainLayout->addWidget(dlChannel);
     biliDlWidget = new BiliDLWidget(downloadManager);
     dlChannel->addTab(biliDlWidget, "bilibili");
+
+    AudioProcessor *processor = new AudioProcessor();
+    AudioConvertOptions option = {};
+    option.inputPath = "";
+
 
 }
 

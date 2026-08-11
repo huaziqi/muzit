@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <functional>
+#include <QDebug>
 
 class AudioProcessor
 {
