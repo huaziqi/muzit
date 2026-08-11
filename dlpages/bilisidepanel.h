@@ -24,6 +24,7 @@ private:
     QLabel *pathLabel;
     QPushButton *browseBtn;
     QLineEdit *templateInput;
+    QComboBox *formatBox;
     QComboBox *qualityBox;
     const QString configGroup = "bilibili";
 
@@ -49,6 +50,7 @@ private:
     QString defaultPath;
     const QString defaultTemplate = "{title} - {author}";
     const QString defaultQaulity = "30280";
+    const QString defaultOutputFormat = "m4a";
 
 private slots:
     void onBrowseClicked();

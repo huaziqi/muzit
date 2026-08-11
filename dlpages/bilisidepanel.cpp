@@ -70,6 +70,18 @@ void BiliSidePanel::initSaveSettings()
         emit saveSettingsChanged(currentSettings());
     });
 
+    // 输出格式
+    QLabel *formatTitle = new QLabel("格式");
+    formatTitle->setStyleSheet("font-size: 11px; color: #666;");
+    mainLayout->addWidget(formatTitle);
+    formatBox = new QComboBox();
+    formatBox->addItem(QStringLiteral("M4A"), QStringLiteral("m4a"));
+    formatBox->setFixedHeight(24);
+    mainLayout->addWidget(formatBox);
+    connect(formatBox, &QComboBox::currentIndexChanged, this, [this]() {
+        emit saveSettingsChanged(currentSettings());
+    });
+
     // 音质
     QLabel *qualTitle = new QLabel("音质");
     qualTitle->setStyleSheet("font-size: 11px; color: #666;");
@@ -101,6 +113,15 @@ void BiliSidePanel::initConfig(){
     else{
         qualityBox->setCurrentIndex(0);
     }
+
+    const QString outputFormat = Config::instance()
+        .getValuewithGroup(
+            configGroup,
+            BiliSaveSettings::OutputFormatKey,
+            defaultOutputFormat)
+        .toString();
+    const int formatIndex = formatBox->findData(outputFormat);
+    formatBox->setCurrentIndex(formatIndex >= 0 ? formatIndex : 0);
 }
 
 void BiliSidePanel::initFavorites()
@@ -200,7 +221,8 @@ BiliSaveSettings BiliSidePanel::currentSettings() const
     return BiliSaveSettings{
         pathLabel->text(),
         templateInput->text(),
-        QString::number(qualityBox->currentData().toInt())
+        QString::number(qualityBox->currentData().toInt()),
+        formatBox->currentData().toString()
     };
 }
 
@@ -257,4 +279,8 @@ void BiliSidePanel::onSettingsChanged(const BiliSaveSettings& settings){
     Config::instance().setValuewithGroup(configGroup, settings.SavePathKey, settings.savePath);
     Config::instance().setValuewithGroup(configGroup, settings.FileNameTemplateKey, settings.fileNameTemplate);
     Config::instance().setValuewithGroup(configGroup, settings.QualityKey, settings.quality);
+    Config::instance().setValuewithGroup(
+        configGroup,
+        settings.OutputFormatKey,
+        settings.outputFormat);
 }

@@ -140,13 +140,13 @@ void ExploreWidget::initCurrentWeekMusic(){
 void ExploreWidget::getWeeklyHTMLInfo(){
 
     weeklyIdReply = downloadManager->fetch(BilibiliApi::weeklyPeriods());
-    connect(weeklyIdReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
-        if(bytesTotal > 0){
-            qDebug() << bytesReceived << "/" << bytesTotal;
-            if(bytesReceived == bytesTotal)
-                qDebug() << "已完成下载";
-        }
-    });
+    // connect(weeklyIdReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
+    //     if(bytesTotal > 0){
+    //         qDebug() << bytesReceived << "/" << bytesTotal;
+    //         if(bytesReceived == bytesTotal)
+    //             qDebug() << "已完成下载";
+    //     }
+    // });
     connect(weeklyIdReply, &QNetworkReply::finished, [this]{ //处理获取到的数据
         QByteArray byteArray = weeklyIdReply->readAll();
         QJsonDocument weeklyIdDoc = QJsonDocument::fromJson(byteArray);
@@ -184,13 +184,13 @@ void ExploreWidget::getCurrentWeekRank()
     }
 
     currentRankReply = downloadManager->fetch(BilibiliApi::weeklySongs(currentWeekId));
-    connect(currentRankReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
-        if(bytesTotal > 0){
-            qDebug() << bytesReceived << "/" << bytesTotal;
-            if(bytesReceived == bytesTotal)
-                qDebug() << "已完成下载";
-        }
-    });
+    // connect(currentRankReply, &QNetworkReply::downloadProgress, [](qint64 bytesReceived, qint64 bytesTotal){
+    //     if(bytesTotal > 0){
+    //         qDebug() << bytesReceived << "/" << bytesTotal;
+    //         if(bytesReceived == bytesTotal)
+    //             qDebug() << "已完成下载";
+    //     }
+    // });
     connect(currentRankReply, &QNetworkReply::finished, [this]{
         QByteArray byteArray = currentRankReply->readAll();
         QJsonDocument currentRankInfo = QJsonDocument::fromJson(byteArray);

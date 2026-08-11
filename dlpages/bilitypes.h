@@ -49,6 +49,8 @@ struct BiliSaveSettings
     static constexpr const char *FileNameTemplateKey = "fileNameTemplate";
     QString quality;
     static constexpr const char *QualityKey = "quality";
+    QString outputFormat;
+    static constexpr const char *OutputFormatKey = "outputFormat";
 };
 
 Q_DECLARE_METATYPE(BiliAudioStream)
