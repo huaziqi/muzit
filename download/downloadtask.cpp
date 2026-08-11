@@ -1,7 +1,10 @@
 #include "downloadtask.h"
 
-DownloadTask::DownloadTask(const QString& _url, const QString& _path, QObject *parent)
-    : QObject{parent}, url(_url), savePath(_path)
+DownloadTask::DownloadTask(
+    const QNetworkRequest& request,
+    const QString& path,
+    QObject *parent)
+    : QObject{parent}, request(request), savePath(path)
 {}
 
 void DownloadTask::start(QNetworkAccessManager *manager)
@@ -17,10 +20,6 @@ void DownloadTask::start(QNetworkAccessManager *manager)
         file = nullptr;
         return;
     }
-
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::UserAgentHeader, "Mozilla/5.0");
-    request.setRawHeader("Referer", "https://www.bilibili.com");
 
     reply = manager->get(request);
 

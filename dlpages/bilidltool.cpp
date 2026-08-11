@@ -62,5 +62,7 @@ DownloadTask *BiliDLTool::downloadAudio(
     const QString &audioUrl,
     const QString &savePath)
 {
-    return downloadManager->addTask(audioUrl, savePath);
+    return downloadManager->addTask(
+        BilibiliApi::audioDownloadRequest(QUrl(audioUrl)),
+        savePath);
 }

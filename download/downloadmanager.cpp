@@ -6,9 +6,11 @@ DownloadManager::DownloadManager(QObject *parent)
     nam = new QNetworkAccessManager(this);
 }
 
-DownloadTask *DownloadManager::addTask(const QString &url, const QString &savePath)
+DownloadTask *DownloadManager::addTask(
+    const QNetworkRequest &request,
+    const QString &savePath)
 {
-    DownloadTask *task = new DownloadTask(url, savePath);
+    DownloadTask *task = new DownloadTask(request, savePath);
     connect(task, &DownloadTask::finished, this, [this, task]{
         taskFinished(task);
     });

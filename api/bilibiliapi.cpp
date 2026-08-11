@@ -84,3 +84,21 @@ QNetworkRequest BilibiliApi::playUrlRequest(const QString &bvid, qint64 cid)
         );
     return request;
 }
+
+QNetworkRequest BilibiliApi::audioDownloadRequest(const QUrl &audioUrl)
+{
+    QNetworkRequest request(audioUrl);
+    request.setHeader(
+        QNetworkRequest::UserAgentHeader,
+        QByteArrayLiteral("Mozilla/5.0")
+        );
+    request.setRawHeader(
+        QByteArrayLiteral("Referer"),
+        QByteArrayLiteral("https://www.bilibili.com")
+        );
+    request.setRawHeader(
+        QByteArrayLiteral("Accept"),
+        QByteArrayLiteral("*/*")
+        );
+    return request;
+}

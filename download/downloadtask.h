@@ -7,14 +7,17 @@ class DownloadTask : public QObject
 {
     Q_OBJECT
 public:
-    explicit DownloadTask(const QString& _url, const QString& _path, QObject *parent = nullptr);
+    explicit DownloadTask(
+        const QNetworkRequest& request,
+        const QString& path,
+        QObject *parent = nullptr);
 public:
     void start(QNetworkAccessManager *manager);
     void stop();
     void cancel();
 
 private:
-    QString url;
+    QNetworkRequest request;
     QString savePath;
     QNetworkReply *reply = nullptr;
     QSaveFile *file = nullptr;

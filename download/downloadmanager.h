@@ -10,12 +10,13 @@ class DownloadManager : public QObject
 public:
     struct taskInfo
     {
-        taskInfo(const QString& _url, const QString& _savePath): url(_url), savePath(_savePath) {}
-        QString url;
+        taskInfo(const QNetworkRequest& _request, const QString& _savePath)
+            : request(_request), savePath(_savePath) {}
+        QNetworkRequest request;
         QString savePath;
     };
     explicit DownloadManager(QObject *parent = nullptr);
-    DownloadTask* addTask(const QString& url, const QString& savePath);
+    DownloadTask* addTask(const QNetworkRequest& request, const QString& savePath);
     QNetworkReply* fetch(const QNetworkRequest& request);
 
 private:
