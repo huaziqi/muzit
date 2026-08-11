@@ -6,6 +6,8 @@
 #include <QStringList>
 #include <QVector>
 
+#include "audio/audiotypes.h"
+
 enum class BiliSearchType { Keyword, BvId };
 
 struct BiliAudioStream
@@ -41,6 +43,20 @@ struct BiliVideoInfo
     QVector<BiliPlayUrlInfo> parts;
 };
 
+struct AudioDownloadJob
+{
+    QString bvid;
+    qint64 cid = 0;
+    int page = 0;
+
+    BiliAudioStream source;
+    AudioMetadata metadata;
+
+    AudioOutputFormat outputFormat = AudioOutputFormat::M4a;
+    QString temporaryPath;
+    QString outputPath;
+};
+
 struct BiliSaveSettings
 {
     QString savePath;
@@ -49,12 +65,14 @@ struct BiliSaveSettings
     static constexpr const char *FileNameTemplateKey = "fileNameTemplate";
     QString quality;
     static constexpr const char *QualityKey = "quality";
-    QString outputFormat;
+    AudioOutputFormat outputFormat = AudioOutputFormat::M4a;
     static constexpr const char *OutputFormatKey = "outputFormat";
 };
 
 Q_DECLARE_METATYPE(BiliAudioStream)
 Q_DECLARE_METATYPE(BiliPlayUrlInfo)
 Q_DECLARE_METATYPE(BiliVideoInfo)
+Q_DECLARE_METATYPE(AudioDownloadJob)
+Q_DECLARE_METATYPE(BiliSaveSettings)
 
 #endif // BILITYPES_H

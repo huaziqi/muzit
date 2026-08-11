@@ -75,7 +75,9 @@ void BiliSidePanel::initSaveSettings()
     formatTitle->setStyleSheet("font-size: 11px; color: #666;");
     mainLayout->addWidget(formatTitle);
     formatBox = new QComboBox();
-    formatBox->addItem(QStringLiteral("M4A"), QStringLiteral("m4a"));
+    formatBox->addItem(
+        QStringLiteral("M4A"),
+        QVariant::fromValue(AudioOutputFormat::M4a));
     formatBox->setFixedHeight(24);
     mainLayout->addWidget(formatBox);
     connect(formatBox, &QComboBox::currentIndexChanged, this, [this]() {
@@ -114,13 +116,16 @@ void BiliSidePanel::initConfig(){
         qualityBox->setCurrentIndex(0);
     }
 
-    const QString outputFormat = Config::instance()
+    const int storedOutputFormat = Config::instance()
         .getValuewithGroup(
             configGroup,
             BiliSaveSettings::OutputFormatKey,
-            defaultOutputFormat)
-        .toString();
-    const int formatIndex = formatBox->findData(outputFormat);
+            static_cast<int>(defaultOutputFormat))
+        .toInt();
+    const AudioOutputFormat outputFormat =
+        static_cast<AudioOutputFormat>(storedOutputFormat);
+    const int formatIndex = formatBox->findData(
+        QVariant::fromValue(outputFormat));
     formatBox->setCurrentIndex(formatIndex >= 0 ? formatIndex : 0);
 }
 
@@ -222,7 +227,7 @@ BiliSaveSettings BiliSidePanel::currentSettings() const
         pathLabel->text(),
         templateInput->text(),
         QString::number(qualityBox->currentData().toInt()),
-        formatBox->currentData().toString()
+        formatBox->currentData().value<AudioOutputFormat>()
     };
 }
 
@@ -282,5 +287,5 @@ void BiliSidePanel::onSettingsChanged(const BiliSaveSettings& settings){
     Config::instance().setValuewithGroup(
         configGroup,
         settings.OutputFormatKey,
-        settings.outputFormat);
+        static_cast<int>(settings.outputFormat));
 }

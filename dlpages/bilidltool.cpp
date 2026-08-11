@@ -58,11 +58,9 @@ void BiliDLTool::getPartAudioStreams(BiliPlayUrlInfo playUrlInfo, QString bvid, 
     });
 }
 
-DownloadTask *BiliDLTool::downloadAudio(
-    const QString &audioUrl,
-    const QString &savePath)
+DownloadTask *BiliDLTool::downloadAudio(const AudioDownloadJob &job)
 {
     return downloadManager->addTask(
-        BilibiliApi::audioDownloadRequest(QUrl(audioUrl)),
-        savePath);
+        BilibiliApi::audioDownloadRequest(QUrl(job.source.url)),
+        job.temporaryPath);
 }

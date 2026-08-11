@@ -2,6 +2,24 @@
 #include <algorithm>
 #include <QRegularExpression>
 
+namespace {
+
+QString outputSuffix(AudioOutputFormat format)
+{
+    switch (format) {
+    case AudioOutputFormat::M4a:
+        return QStringLiteral("m4a");
+    case AudioOutputFormat::Mp3:
+        return QStringLiteral("mp3");
+    case AudioOutputFormat::Flac:
+        return QStringLiteral("flac");
+    }
+
+    return QStringLiteral("m4a");
+}
+
+}
+
 BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
 {
@@ -49,55 +67,6 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
 
     // 加载演示数据
     //loadDemoData();
-}
-
-void BiliDLWidget::loadDemoData()
-{
-    QVector<BiliVideoInfo> demo;
-    BiliVideoInfo first;
-    first.bvid = "BV1xx411x7aa";
-    first.title = "青花瓷 翻唱版 - 完整版本";
-    first.author = "某某某";
-    first.durationMilliseconds = 222000;
-    first.description = "高质量翻唱";
-    first.playCount = 124000;
-    BiliPlayUrlInfo firstPart;
-    firstPart.cid = 1;
-    firstPart.page = 1;
-    firstPart.title = first.title;
-    firstPart.durationMilliseconds = first.durationMilliseconds;
-    first.parts.append(firstPart);
-    demo.append(first);
-
-    BiliVideoInfo second;
-    second.bvid = "BV1xx411x7bb";
-    second.title = "晴天 - 周杰伦（钢琴版）";
-    second.author = "钢琴君";
-    second.durationMilliseconds = 255000;
-    second.description = "钢琴改编，高品质录制";
-    second.playCount = 886000;
-    BiliPlayUrlInfo secondPart;
-    secondPart.cid = 2;
-    secondPart.page = 1;
-    secondPart.title = second.title;
-    secondPart.durationMilliseconds = second.durationMilliseconds;
-    second.parts.append(secondPart);
-    demo.append(second);
-
-    BiliVideoInfo third;
-    third.bvid = "BV1xx411x7cc";
-    third.title = "稻香 官方MV 完整版";
-    third.author = "Jay Official";
-    third.durationMilliseconds = 238000;
-    third.playCount = 2340000;
-    BiliPlayUrlInfo thirdPart;
-    thirdPart.cid = 3;
-    thirdPart.page = 1;
-    thirdPart.title = third.title;
-    thirdPart.durationMilliseconds = third.durationMilliseconds;
-    third.parts.append(thirdPart);
-    demo.append(third);
-    resultList->setResults(demo);
 }
 
 void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize)
@@ -198,9 +167,10 @@ void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
         [](const BiliPlayUrlInfo &part) { return part.selected; });
 
     for (const BiliPlayUrlInfo &part : info.parts) {
+
         if (!part.selected)
             continue;
-
+        AudioDownloadJob curJob;
         const auto audioIt = std::find_if(
             part.audioStreams.cbegin(), part.audioStreams.cend(),
             [qualityId](const BiliAudioStream &audio) {
@@ -224,9 +194,21 @@ void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
         if (fileName.isEmpty())
             fileName = info.bvid + QStringLiteral("-P%1").arg(part.page);
 
-        const QString savePath =
+        curJob.bvid = info.bvid;
+        curJob.cid = part.cid;
+        curJob.page = part.page;
+        curJob.source = *audioIt;
+        curJob.metadata.title =
+            info.parts.size() > 1 ? part.title : info.title;
+        curJob.metadata.artist = info.author;
+        curJob.metadata.coverUrl = info.coverUrl;
+        curJob.outputFormat = settings.outputFormat;
+        curJob.temporaryPath =
             QDir(settings.savePath).filePath(fileName + ".m4s");
-        DownloadTask *task = biliDLTool->downloadAudio(audioIt->url, savePath);
+        curJob.outputPath = QDir(settings.savePath).filePath(
+            fileName + "." + outputSuffix(curJob.outputFormat));
+
+        DownloadTask *task = biliDLTool->downloadAudio(curJob);
         sidePanel->addDownloadTask(
             QStringLiteral("P%1 %2 · %3")
                 .arg(part.page)

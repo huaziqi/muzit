@@ -6,9 +6,9 @@
 
 enum class AudioOutputFormat
 {
-    M4a,
-    Mp3,
-    Flac
+    M4a = 0,
+    Mp3 = 1,
+    Flac = 2
 };
 
 struct AudioConvertOptions
@@ -30,6 +30,18 @@ struct AudioInfo
     int channels = 0;
 };
 
+struct AudioMetadata
+{
+    QString title;
+    QString artist;
+    QString album;
+    QString coverUrl;
+};
+
+
+Q_DECLARE_METATYPE(AudioOutputFormat);
 Q_DECLARE_METATYPE(AudioConvertOptions);
+Q_DECLARE_METATYPE(AudioInfo);
+Q_DECLARE_METATYPE(AudioMetadata);
 
 #endif // AUDIOTYPES_H

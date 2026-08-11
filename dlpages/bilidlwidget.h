@@ -33,7 +33,6 @@ private:
 
     int curPageSize = -1;
 
-    void loadDemoData();
     void loadSelectedPartAudio(BiliVideoInfo info);
     void requestNextPartAudio();
     void finishPartAudioLoading();
