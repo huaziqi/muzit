@@ -61,3 +61,4 @@ include($$PWD/musicItem/musicItemMoudle.pri)
 include($$PWD/audio/audio.pri)
 
 
+
