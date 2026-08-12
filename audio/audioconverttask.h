@@ -2,6 +2,7 @@
 #define AUDIOCONVERTTASK_H
 
 #include "audiotypes.h"
+#include "audioprocessor.h"
 
 #include <QObject>
 #include <atomic>
@@ -15,6 +16,7 @@ public:
         const AudioConvertOptions &options,
         QObject *parent = nullptr);
 
+    qint64 process = 0;
     void start();
     void cancel();
 

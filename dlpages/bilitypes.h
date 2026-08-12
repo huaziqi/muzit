@@ -55,6 +55,16 @@ struct AudioDownloadJob
     AudioOutputFormat outputFormat = AudioOutputFormat::M4a;
     QString temporaryPath;
     QString outputPath;
+
+    AudioConvertOptions toConvertOptions() const
+    {
+        AudioConvertOptions options;
+        options.inputPath = temporaryPath;
+        options.outputPath = outputPath;
+        options.format = outputFormat;
+        options.removeSourceAfterSuccess = true;
+        return options;
+    }
 };
 
 struct BiliSaveSettings
@@ -68,6 +78,7 @@ struct BiliSaveSettings
     AudioOutputFormat outputFormat = AudioOutputFormat::M4a;
     static constexpr const char *OutputFormatKey = "outputFormat";
 };
+
 
 Q_DECLARE_METATYPE(BiliAudioStream)
 Q_DECLARE_METATYPE(BiliPlayUrlInfo)

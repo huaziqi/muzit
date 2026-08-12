@@ -107,7 +107,6 @@ void BiliDLWidget::requestNextPartAudio()
         finishPartAudioLoading();
         return;
     }
-
     const qint64 index = pendingAudioIndex.takeFirst();
     biliDLTool->getPartAudioStreams(pendingAudioInfo.parts[index], pendingAudioInfo.bvid, index);
 }
@@ -155,6 +154,7 @@ void BiliDLWidget::onDownloadRequested(const BiliVideoInfo &info)
         return;
 
     const QVector<AudioMetadata> metadata = dialog.metadata();
+
     for (qsizetype i = 0; i < selectedPartIndexes.size(); ++i) {
         const BiliPlayUrlInfo &part =
             info.parts.at(selectedPartIndexes.at(i));

@@ -5,12 +5,15 @@
 #include "download/downloadmanager.h"
 #include "api/bilibiliapi.h"
 #include "api/apiparser.h"
+#include "audio/audioconvertmanager.h"
+
 
 class BiliDLTool : public QObject
 {
     Q_OBJECT
 private:
     DownloadManager *downloadManager;
+    AudioConvertManager *audioConvertManager;
 
 public:
     explicit BiliDLTool(
@@ -27,6 +30,7 @@ public:
         AudioDownloadJob &job,
         QString &error) const;
     DownloadTask *downloadAudio(const AudioDownloadJob &job);
+
 
 signals:
     void videoInfoReady(BiliVideoInfo info);

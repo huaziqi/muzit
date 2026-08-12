@@ -15,7 +15,6 @@ QString outputSuffix(AudioOutputFormat format)
     case AudioOutputFormat::Flac:
         return QStringLiteral("flac");
     }
-
     return QStringLiteral("m4a");
 }
 
@@ -26,6 +25,7 @@ BiliDLTool::BiliDLTool(
     QObject *parent)
     : QObject{parent}, downloadManager(_downloadManager)
 {
+    audioConvertManager = new AudioConvertManager(this);
 }
 
 void BiliDLTool::getVideoInfo(const QString &bvid)
@@ -147,7 +147,14 @@ bool BiliDLTool::createAudioDownloadJob(
 
 DownloadTask *BiliDLTool::downloadAudio(const AudioDownloadJob &job)
 {
-    return downloadManager->addTask(
+    DownloadTask* task = downloadManager->addTask(
         BilibiliApi::audioDownloadRequest(QUrl(job.source.url)),
         job.temporaryPath);
+
+    AudioConvertOptions audioConvertionOption = job.toConvertOptions();
+
+    connect(task, &DownloadTask::finished, this, [=](){
+        AudioConvertTask *convertTask = audioConvertManager->addTask(audioConvertionOption);
+    });
+    return task;
 }

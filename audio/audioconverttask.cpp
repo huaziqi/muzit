@@ -9,8 +9,17 @@ AudioConvertTask::AudioConvertTask(
 
 void AudioConvertTask::start()
 {
-    emit failed(QStringLiteral("音频转换任务尚未实现"));
+    AudioProcessor processor;
+    QString error;
+    if(!processor.process(options,
+                           [=](qint64 &process){}, [=](){return cancelRequested.load();}, error)){
+        emit failed(error);
+        return;
+    }
+    emit finished(options.outputPath);
 }
+
+
 
 void AudioConvertTask::cancel()
 {
