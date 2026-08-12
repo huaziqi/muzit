@@ -50,10 +50,13 @@ bool AudioProcessor::process(
     const CancellationCallback &isCanceled,
     QString &error)
 {
-    Q_UNUSED(progressCallback)
-    Q_UNUSED(isCanceled)
     AVFormatContext* inputContext = nullptr;
     QByteArray inputPath = options.inputPath.toUtf8();
+
+    if (progressCallback)
+        progressCallback(0);
+
+    int lastProgress = 0;
 
     int result = avformat_open_input(&inputContext, inputPath.constData(), nullptr, nullptr);
     if(checkFail(result < 0, error, "无法打开输入文件"))
@@ -104,33 +107,91 @@ bool AudioProcessor::process(
     if(checkFail(packet == nullptr, error, "无法创建音频数据包", &inputContext, &outputContext, &outputContext->pb))
         return false;
 
-    while (true) {
 
+
+    while (true) {
+        // 在读取下一帧前检查取消
+        if (isCanceled && isCanceled()) {
+            av_packet_free(&packet);
+            avio_closep(&outputContext->pb);
+            avformat_free_context(outputContext);
+            avformat_close_input(&inputContext);
+
+            // 取消不是转换错误，保持 error 为空
+            error.clear();
+            return false;
+        }
 
         result = av_read_frame(inputContext, packet);
 
         if (result == AVERROR_EOF)
             break;
-        if(checkFail(result < 0, error, "读取音频数据失败", &inputContext, &outputContext, &outputContext->pb, &packet))
+
+        if (checkFail(
+                result < 0,
+                error,
+                QStringLiteral("读取音频数据失败"),
+                &inputContext,
+                &outputContext,
+                &outputContext->pb,
+                &packet)) {
             return false;
+        }
 
         if (packet->stream_index == audioStreamIndex) {
+            /*
+         * 必须在 av_packet_rescale_ts() 之前计算。
+         * 此时 packet 时间戳使用 input audioStream 的 time_base。
+         */
+            const int64_t timestamp =
+                packet->pts != AV_NOPTS_VALUE
+                    ? packet->pts
+                    : packet->dts;
+
+            if (timestamp != AV_NOPTS_VALUE
+                && inputContext->duration > 0) {
+                const int64_t positionUs = av_rescale_q(
+                    timestamp,
+                    audioStream->time_base,
+                    AV_TIME_BASE_Q);
+
+                const int progress = qBound(
+                    0,
+                    static_cast<int>(
+                        positionUs * 100 / inputContext->duration),
+                    99);
+
+                // 防止每个 packet 都发送相同的进度
+                if (progress > lastProgress) {
+                    lastProgress = progress;
+
+                    if (progressCallback)
+                        progressCallback(progress);
+                }
+            }
+
             av_packet_rescale_ts(
                 packet,
                 audioStream->time_base,
-                outputStream->time_base
-                );
+                outputStream->time_base);
 
             packet->stream_index = outputStream->index;
             packet->pos = -1;
 
             result = av_interleaved_write_frame(
                 outputContext,
-                packet
-                );
+                packet);
 
-            if(checkFail(result < 0, error, "写入音频数据失败", &inputContext, &outputContext, &outputContext->pb, &packet))
+            if (checkFail(
+                    result < 0,
+                    error,
+                    QStringLiteral("写入音频数据失败"),
+                    &inputContext,
+                    &outputContext,
+                    &outputContext->pb,
+                    &packet)) {
                 return false;
+            }
         }
 
         av_packet_unref(packet);

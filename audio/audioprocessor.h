@@ -10,7 +10,7 @@
 class AudioProcessor
 {
 public:
-    using ProgressCallback = std::function<void(qint64&)>;
+    using ProgressCallback = std::function<void(int)>;
     using CancellationCallback = std::function<bool()>;
 
     bool process(

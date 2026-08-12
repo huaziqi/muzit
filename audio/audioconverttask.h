@@ -16,7 +16,7 @@ public:
         const AudioConvertOptions &options,
         QObject *parent = nullptr);
 
-    qint64 process = 0;
+    int process = 0;
     void start();
     void cancel();
 

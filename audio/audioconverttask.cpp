@@ -12,7 +12,9 @@ void AudioConvertTask::start()
     AudioProcessor processor;
     QString error;
     if(!processor.process(options,
-                           [=](qint64 &process){}, [=](){return cancelRequested.load();}, error)){
+                           [=](int process){
+                               qDebug() << process;
+        }, [=](){return cancelRequested.load();}, error)){
         emit failed(error);
         return;
     }
