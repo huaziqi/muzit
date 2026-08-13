@@ -8,6 +8,7 @@
 #include "bilisearchbar.h"
 #include "biliresultlist.h"
 #include "bilisidepanel.h"
+#include "api/bilibiliclient.h"
 
 
 class BiliDLWidget : public QWidget
@@ -24,12 +25,14 @@ private:
     DownloadManager *downloadManager;
 
     BiliDLTool *biliDLTool;
+    BilibiliClient *bilibiliClient;
 
     BiliVideoInfo pendingAudioInfo;
     QVector<BiliVideoInfo> queuedAudioInfo;
     QVector<qint64> pendingAudioIndex;
     bool audioRequestInProgress = false;
     bool hasQueuedAudioInfo = false;
+    bool keywordSearchActive = false;
 
     int curPageSize = -1;
 
@@ -39,6 +42,11 @@ private:
 
 private slots:
     void onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize);
+    void onKeywordSearchFinished(const QVector<BiliVideoInfo> &results,
+                                 int page,
+                                 int totalResults);
+    void onKeywordSearchFailed(const QString &error);
+    void onVideoInfoFailed(const QString &error);
     void onItemSelected(const BiliVideoInfo &info);
     void onPartsSelectionChanged(const BiliVideoInfo &info);
     void onVideoInfoReady(const BiliVideoInfo &info);

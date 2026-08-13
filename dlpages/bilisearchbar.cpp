@@ -52,18 +52,19 @@ BiliSearchBar::BiliSearchBar(QWidget *parent)
 
 void BiliSearchBar::searchFinished(const QString &error)
 {
-    if(error == ""){
-        searchBtn->setDisabled(false);
-    }
+    Q_UNUSED(error);
+    searchBtn->setDisabled(false);
 }
 
 void BiliSearchBar::onSearchClicked()
 {
     searchBtn->setDisabled(true);
     QString keyword = searchInput->text().trimmed();
-    if (keyword.isEmpty()) return;
+    if (keyword.isEmpty()) {
+        searchBtn->setDisabled(false);
+        return;
+    }
     auto type = static_cast<BiliSearchType>(typeGroup->checkedId());
     int pageSize = pageSizeBox->currentText().toInt();
     emit searchRequested(keyword, type, pageSize);
 }
-

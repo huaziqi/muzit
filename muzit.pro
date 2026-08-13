@@ -9,6 +9,7 @@ CONFIG += c++17
 
 SOURCES += \
     api/apiparser.cpp \
+    api/bilibiliclient.cpp \
     api/bilibiliapi.cpp \
     config.cpp \
     dlpages/biliaudiometadatadialog.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
 
 HEADERS += \
     api/apiparser.h \
+    api/bilibiliclient.h \
     api/bilibiliapi.h \
     common.h \
     config.h \

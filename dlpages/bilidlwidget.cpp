@@ -5,6 +5,7 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     : QWidget{parent}, downloadManager(_downloadManager)
 {
     biliDLTool = new BiliDLTool(downloadManager);
+    bilibiliClient = new BilibiliClient(this);
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -41,10 +42,16 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
             this, &BiliDLWidget::onPartsSelectionChanged);
     connect(biliDLTool, &BiliDLTool::videoInfoReady,
             this, &BiliDLWidget::onVideoInfoReady);
+    connect(biliDLTool, &BiliDLTool::videoInfoFailed,
+            this, &BiliDLWidget::onVideoInfoFailed);
     connect(biliDLTool, &BiliDLTool::partAudioStreamsReady,
             this, &BiliDLWidget::onPartAudioStreamsReady);
     connect(biliDLTool, &BiliDLTool::partAudioStreamsFailed,
             this, &BiliDLWidget::onPartAudioStreamsFailed);
+    connect(bilibiliClient, &BilibiliClient::searchFinished,
+            this, &BiliDLWidget::onKeywordSearchFinished);
+    connect(bilibiliClient, &BilibiliClient::searchFailed,
+            this, &BiliDLWidget::onKeywordSearchFailed);
 
     // 加载演示数据
     //loadDemoData();
@@ -53,22 +60,54 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
 void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize)
 {
     curPageSize = pageSize;
-    Q_UNUSED(type); Q_UNUSED(pageSize);
     if(type == BiliSearchType::BvId){
+        keywordSearchActive = false;
         biliDLTool->getVideoInfo(keyword);
+    } else {
+        keywordSearchActive = true;
+        bilibiliClient->searchVideos(keyword, 1, pageSize);
     }
+}
+
+void BiliDLWidget::onKeywordSearchFinished(
+    const QVector<BiliVideoInfo> &results,
+    int page,
+    int totalResults)
+{
+    Q_UNUSED(page);
+    Q_UNUSED(totalResults);
+    searchBar->searchFinished();
+    resultList->setResults(results);
+}
+
+void BiliDLWidget::onKeywordSearchFailed(const QString &error)
+{
+    qWarning() << "Bilibili keyword search failed:" << error;
+    searchBar->searchFinished(error);
 }
 
 void BiliDLWidget::onVideoInfoReady(const BiliVideoInfo &info)
 {
     searchBar->searchFinished();
-    resultList->setResults({info});
+    if (keywordSearchActive)
+        resultList->updateVideoInfo(info);
+    else
+        resultList->setResults({info});
+    sidePanel->setSelectedSong(info);
     loadSelectedPartAudio(info);
+}
+
+void BiliDLWidget::onVideoInfoFailed(const QString &error)
+{
+    qWarning() << "Bilibili video info failed:" << error;
+    searchBar->searchFinished(error);
 }
 
 void BiliDLWidget::onItemSelected(const BiliVideoInfo &info)
 {
     sidePanel->setSelectedSong(info);
+    if (info.parts.isEmpty())
+        biliDLTool->getVideoInfo(info.bvid);
 }
 
 void BiliDLWidget::onPartsSelectionChanged(const BiliVideoInfo &info)
