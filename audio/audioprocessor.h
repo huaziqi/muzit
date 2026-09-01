@@ -1,11 +1,7 @@
 #ifndef AUDIOPROCESSOR_H
 #define AUDIOPROCESSOR_H
 
-#include "audiotypes.h"
-
-#include <QString>
-#include <functional>
-#include <QDebug>
+#include "audioconverter.h"
 
 class AudioProcessor
 {

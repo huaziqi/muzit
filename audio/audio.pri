@@ -2,15 +2,22 @@
 FFMPEG_ROOT = D:/vcpkg/installed/x64-windows
 
 HEADERS += \
+    $$PWD/audioconverter.h \
     $$PWD/audioconvertmanager.h \
     $$PWD/audiotypes.h \
     $$PWD/audioprocessor.h \
-    $$PWD/audioconverttask.h
+    $$PWD/audioconverttask.h \
+    $$PWD/ffmpegutils.h \
+    $$PWD/m4aremuxer.h \
+    $$PWD/mp3transcoder.h
 
 SOURCES += \
     $$PWD/audioconvertmanager.cpp \
     $$PWD/audioprocessor.cpp \
-    $$PWD/audioconverttask.cpp
+    $$PWD/audioconverttask.cpp \
+    $$PWD/ffmpegutils.cpp \
+    $$PWD/m4aremuxer.cpp \
+    $$PWD/mp3transcoder.cpp
 
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$FFMPEG_ROOT/include
