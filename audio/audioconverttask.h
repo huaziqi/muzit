@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <atomic>
+#include <memory.h>
 
 class AudioConvertTask : public QObject
 {
@@ -18,6 +19,7 @@ public:
 
     int process = 0;
     void start();
+    std::unique_ptr<AudioProcessor> createConverter(AudioOutputFormat format);
     void cancel();
 
 signals:

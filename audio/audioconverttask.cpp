@@ -9,16 +9,19 @@ AudioConvertTask::AudioConvertTask(
 
 void AudioConvertTask::start()
 {
-    AudioProcessor processor;
     QString error;
-    if(!processor.process(options,
-                           [=](int process){
-                               qDebug() << process;
-        }, [=](){return cancelRequested.load();}, error)){
-        emit failed(error);
-        return;
+    AudioProcessor processor = createConverter(options.format);
+}
+
+std::unique_ptr<AudioConverter> createConverter(AudioOutputFormat format){
+    switch(format){
+    case AudioOutputFormat::M4a:
+        return std::make_unique<M4aRemuxer>();
+    case AudioOutputFormat::Mp3:
+        return std::make_unique<Mp3Transcoder>();
+    default:
+        return nullptr;
     }
-    emit finished(options.outputPath);
 }
 
 
