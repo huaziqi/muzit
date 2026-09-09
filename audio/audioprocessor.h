@@ -6,14 +6,7 @@
 class AudioProcessor
 {
 public:
-    using ProgressCallback = std::function<void(int)>;
-    using CancellationCallback = std::function<bool()>;
-
-    bool process(
-        const AudioConvertOptions &options,
-        const ProgressCallback &progressCallback,
-        const CancellationCallback &isCanceled,
-        QString &error);
+    std::unique_ptr<AudioProcessor> createConverter(AudioOutputFormat format);
 };
 
 #endif // AUDIOPROCESSOR_H
