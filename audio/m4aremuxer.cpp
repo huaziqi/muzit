@@ -48,16 +48,16 @@ bool checkFail(
 }
 
 bool M4aRemuxer::convert(
-    const AudioConvertOptions &options,
-    const ProcessCallback &progressCallback,
-    const CancellationCallback &isCanceled,
+    const AudioConvertOptions &option,
+    const ProgressCallback &progress,
+    const CancellationCallback &isCancelled,
     QString &error)
 {
     AVFormatContext* inputContext = nullptr;
-    QByteArray inputPath = options.inputPath.toUtf8();
+    QByteArray inputPath = option.inputPath.toUtf8();
 
-    if (progressCallback)
-        progressCallback(0);
+    if (progress)
+        progress(0);
 
     int lastProgress = 0;
 
@@ -78,7 +78,7 @@ bool M4aRemuxer::convert(
         return false;
 
     AVFormatContext *outputContext = nullptr;
-    QByteArray outputPath = options.outputPath.toUtf8();
+    QByteArray outputPath = option.outputPath.toUtf8();
     result = avformat_alloc_output_context2(&outputContext, nullptr, "ipod", outputPath.constData());
     if(checkFail(result < 0 || outputContext == nullptr, error, "无法创建 M4A 输出容器", &inputContext, &outputContext))
         return false;
@@ -114,7 +114,7 @@ bool M4aRemuxer::convert(
 
     while (true) {
         // 在读取下一帧前检查取消
-        if (isCanceled && isCanceled()) {
+        if (isCancelled && isCancelled()) {
             av_packet_free(&packet);
             avio_closep(&outputContext->pb);
             avformat_free_context(outputContext);
@@ -158,18 +158,18 @@ bool M4aRemuxer::convert(
                     audioStream->time_base,
                     AV_TIME_BASE_Q);
 
-                const int progress = qBound(
+                const int progressPercent = qBound(
                     0,
                     static_cast<int>(
                         positionUs * 100 / inputContext->duration),
                     99);
 
                 // 防止每个 packet 都发送相同的进度
-                if (progress > lastProgress) {
-                    lastProgress = progress;
+                if (progressPercent > lastProgress) {
+                    lastProgress = progressPercent;
 
-                    if (progressCallback)
-                        progressCallback(progress);
+                    if (progress)
+                        progress(progressPercent);
                 }
             }
 

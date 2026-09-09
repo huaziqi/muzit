@@ -9,17 +9,17 @@
 class AudioConverter
 {
 public:
-    using ProcessCallback = std::function<void(int)>;
+    using ProgressCallback = std::function<void(int)>;
     using CancellationCallback = std::function<bool()>;
 
     virtual ~AudioConverter() = default;
 
     virtual bool convert(
         const AudioConvertOptions &option,
-        const ProcessCallback &process,
-        const CancellationCallback &cancel,
-        const QString &error
-    );
+        const ProgressCallback &progress,
+        const CancellationCallback &isCancelled,
+        QString &error
+    ) = 0;
 };
 
 #endif // AUDIOCONVERTER_H

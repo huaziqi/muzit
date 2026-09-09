@@ -11,10 +11,10 @@ public:
     M4aRemuxer();
     bool convert(
         const AudioConvertOptions &option,
-        const ProcessCallback &process,
-        const CancellationCallback &cancel,
-        const QString &error
-    );
+        const ProgressCallback &progress,
+        const CancellationCallback &isCancelled,
+        QString &error
+    ) override;
 };
 
 #endif // M4AREMUXER_H
