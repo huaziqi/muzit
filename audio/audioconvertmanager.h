@@ -14,7 +14,6 @@ class AudioConvertManager : public QObject
 
 public:
     explicit AudioConvertManager(QObject *parent = nullptr);
-
     AudioConvertTask *addTask(const AudioConvertOptions &options);
 
 private:

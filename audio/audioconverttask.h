@@ -17,9 +17,7 @@ public:
         const AudioConvertOptions &options,
         QObject *parent = nullptr);
 
-    int process = 0;
     void start();
-    std::unique_ptr<AudioProcessor> createConverter(AudioOutputFormat format);
     void cancel();
 
 signals:
@@ -29,7 +27,10 @@ signals:
     void canceled();
 
 private:
+    AudioConverter::ProgressCallback progressFunc;
+    AudioConverter::CancellationRequest cancelRequest;
     AudioConvertOptions options;
+    std::unique_ptr<AudioProcessor> mainProcessor;
     std::atomic_bool cancelRequested{false};
 };
 

@@ -50,7 +50,7 @@ bool checkFail(
 bool M4aRemuxer::convert(
     const AudioConvertOptions &option,
     const ProgressCallback &progress,
-    const CancellationCallback &isCancelled,
+    const CancellationRequest &cancelRequest,
     QString &error)
 {
     AVFormatContext* inputContext = nullptr;
@@ -114,7 +114,7 @@ bool M4aRemuxer::convert(
 
     while (true) {
         // 在读取下一帧前检查取消
-        if (isCancelled && isCancelled()) {
+        if (cancelRequest && cancelRequest()) {
             av_packet_free(&packet);
             avio_closep(&outputContext->pb);
             avformat_free_context(outputContext);

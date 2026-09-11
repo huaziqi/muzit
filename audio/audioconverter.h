@@ -10,14 +10,14 @@ class AudioConverter
 {
 public:
     using ProgressCallback = std::function<void(int)>;
-    using CancellationCallback = std::function<bool()>;
+    using CancellationRequest = std::function<bool()>;
 
     virtual ~AudioConverter() = default;
 
     virtual bool convert(
         const AudioConvertOptions &option,
         const ProgressCallback &progress,
-        const CancellationCallback &isCancelled,
+        const CancellationRequest &cancelRequest,
         QString &error
     ) = 0;
 };

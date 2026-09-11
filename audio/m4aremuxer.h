@@ -12,7 +12,7 @@ public:
     bool convert(
         const AudioConvertOptions &option,
         const ProgressCallback &progress,
-        const CancellationCallback &isCancelled,
+        const CancellationRequest &cancelRequest,
         QString &error
     ) override;
 };
