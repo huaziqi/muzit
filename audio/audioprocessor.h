@@ -15,7 +15,7 @@ public:
                QString& error);
 
 private:
-    void startConvert(const AudioConvertOptions& options,
+    bool startConvert(const AudioConvertOptions& options,
                       const AudioConverter::ProgressCallback& progressFunc,
                       const AudioConverter::CancellationRequest& cancelRequest,
                       QString& error);

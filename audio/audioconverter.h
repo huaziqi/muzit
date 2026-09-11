@@ -15,7 +15,7 @@ public:
     virtual ~AudioConverter() = default;
 
     virtual bool convert(
-        const AudioConvertOptions &option,
+        const AudioConvertOptions &options,
         const ProgressCallback &progress,
         const CancellationRequest &cancelRequest,
         QString &error

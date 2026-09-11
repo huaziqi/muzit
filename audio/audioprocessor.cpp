@@ -24,13 +24,16 @@ void AudioProcessor::start(const AudioConverter::ProgressCallback& progressFunc,
                            const AudioConverter::CancellationRequest& cancelRequest,
                            QString& error)
 {
-    startConvert(audioOptions, progressFunc, cancelRequest, error);
+    const bool convertSuccess = startConvert(audioOptions, progressFunc, cancelRequest, error);
+
 }
 
-void AudioProcessor::startConvert(const AudioConvertOptions& options,
+bool AudioProcessor::startConvert(const AudioConvertOptions& options,
                                   const AudioConverter::ProgressCallback& progressFunc,
                                   const AudioConverter::CancellationRequest& cancelRequest,
                                   QString& error)
 {
     const bool isSuccess = mainConverter->convert(options, progressFunc, cancelRequest, error);
+
+    return isSuccess;
 }

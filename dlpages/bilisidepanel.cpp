@@ -76,8 +76,11 @@ void BiliSidePanel::initSaveSettings()
     mainLayout->addWidget(formatTitle);
     formatBox = new QComboBox();
     formatBox->addItem(
-        QStringLiteral("M4A"),
+        QStringLiteral("M4a"),
         QVariant::fromValue(AudioOutputFormat::M4a));
+    formatBox->addItem(
+        QStringLiteral("Mp3"),
+        QVariant::fromValue(AudioOutputFormat::Mp3));
     formatBox->setFixedHeight(24);
     mainLayout->addWidget(formatBox);
     connect(formatBox, &QComboBox::currentIndexChanged, this, [this]() {

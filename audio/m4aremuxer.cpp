@@ -48,13 +48,13 @@ bool checkFail(
 }
 
 bool M4aRemuxer::convert(
-    const AudioConvertOptions &option,
+    const AudioConvertOptions &options,
     const ProgressCallback &progress,
     const CancellationRequest &cancelRequest,
     QString &error)
 {
     AVFormatContext* inputContext = nullptr;
-    QByteArray inputPath = option.inputPath.toUtf8();
+    QByteArray inputPath = options.inputPath.toUtf8();
 
     if (progress)
         progress(0);
@@ -78,7 +78,7 @@ bool M4aRemuxer::convert(
         return false;
 
     AVFormatContext *outputContext = nullptr;
-    QByteArray outputPath = option.outputPath.toUtf8();
+    QByteArray outputPath = options.outputPath.toUtf8();
     result = avformat_alloc_output_context2(&outputContext, nullptr, "ipod", outputPath.constData());
     if(checkFail(result < 0 || outputContext == nullptr, error, "无法创建 M4A 输出容器", &inputContext, &outputContext))
         return false;
