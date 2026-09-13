@@ -14,4 +14,4 @@ SOURCES += \
 HEADERS += \
     audioprocessortest.h
 
-include($$PWD/../../audio/audio.pri)
+include($$PWD/../../src/core/audio/audio.pri)

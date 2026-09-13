@@ -1,0 +1,94 @@
+#ifndef COMMON_H
+#define COMMON_H
+
+
+#include <QCoreApplication>
+//文件处理
+#include <QFile>
+#include <QSaveFile>
+#include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QStandardPaths>
+//事件处理
+#include <QMouseEvent>
+#include <QResizeEvent>
+
+//数学
+#include <QtMath>
+
+//页面布局
+#include <QTabWidget>
+#include <QMenuBar>
+#include <QMenu>
+#include <QWidget>
+#include <QFrame>
+#include <QScrollArea>
+#include <QPoint>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QProgressBar>
+
+//控件
+#include <QStackedWidget>
+#include <QPushButton>
+#include <QButtonGroup>
+#include <QLabel>
+#include <QTimer>
+
+
+//UI
+#include <QPixmap>
+#include <QPainter>
+#include <QColor>
+#include <QIcon>
+#include <QPainterPath>
+#include <QFontDatabase>
+
+#include <QApplication>
+#include <QPropertyAnimation>
+
+//结构体
+#include <QVector>
+#include <QQueue>
+
+//网络
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrlQuery>
+
+namespace common {
+    inline QString cachePath= QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+
+    inline int getColumn(int width){
+        int column = 3;
+
+        if(width < 1400)
+            column = 2;
+        if(width < 660)
+            column = 1;
+        return column;
+    };
+
+    inline bool loadFont(const QString& fontPath){ //加载字体
+        int loadFontId = QFontDatabase::addApplicationFont(fontPath);
+        if(loadFontId == -1){
+            return false;
+        }
+        QStringList fontFamliy = QFontDatabase::applicationFontFamilies(loadFontId);
+        if(fontFamliy.empty()){
+            qDebug() << "[common.h] 字体" << fontPath << "为空";
+            return false;
+        }
+        qDebug() << fontFamliy.at(0);
+        return true;
+    }
+    inline QFont vonwaoFont = QFont("VonwaonBitmap 16px", 16);
+}
+
+#endif // COMMON_H

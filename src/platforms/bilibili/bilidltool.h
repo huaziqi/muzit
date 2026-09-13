@@ -1,0 +1,44 @@
+#ifndef BILIDLTOOL_H
+#define BILIDLTOOL_H
+
+#include "core/download/downloadmanager.h"
+#include "platforms/bilibili/api/bilibiliapi.h"
+#include "platforms/bilibili/api/apiparser.h"
+#include "core/audio/audioconvertmanager.h"
+
+#include <QObject>
+#include <QString>
+
+
+class BiliDLTool : public QObject
+{
+    Q_OBJECT
+private:
+    DownloadManager *downloadManager;
+    AudioConvertManager *audioConvertManager;
+
+public:
+    explicit BiliDLTool(
+        DownloadManager *_downloadManager,
+        QObject *parent = nullptr);
+
+    void getVideoInfo(const QString &bvid);
+    void getPartAudioStreams(BiliPlayUrlInfo playUrlInfo, QString bvid, qint64 index);
+    bool createAudioDownloadJob(
+        const BiliVideoInfo &videoInfo,
+        const BiliPlayUrlInfo &part,
+        const BiliSaveSettings &settings,
+        const AudioMetadata &metadata,
+        AudioDownloadJob &job,
+        QString &error) const;
+    DownloadTask *downloadAudio(const AudioDownloadJob &job);
+
+
+signals:
+    void videoInfoReady(BiliVideoInfo info);
+    void videoInfoFailed(QString error);
+    void partAudioStreamsReady(BiliPlayUrlInfo playUrlInfo, qint64 index);
+    void partAudioStreamsFailed(qint64 cid, QString error);
+};
+
+#endif // BILIDLTOOL_H

@@ -1,68 +1,18 @@
-QT       += core gui network
+QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+INCLUDEPATH += $$PWD/src
 
-SOURCES += \
-    api/apiparser.cpp \
-    api/bilibiliclient.cpp \
-    api/bilibiliapi.cpp \
-    config.cpp \
-    dlpages/biliaudiometadatadialog.cpp \
-    dlpages/bilidltool.cpp \
-    dlpages/bilidlwidget.cpp \
-    dlpages/bilisearchbar.cpp \
-    dlpages/bilisidepanel.cpp \
-    dlpages/biliresultitem.cpp \
-    dlpages/biliresultlist.cpp \
-    download/downloadmanager.cpp \
-    download/downloadtask.cpp \
-    downloadwidget.cpp \
-    explorewidget.cpp \
-    framelesswidget.cpp \
-    localwidget.cpp \
-    main.cpp \
-    mainwidget.cpp \
-    playerwidget.cpp \
-    titlebar.cpp
+include($$PWD/src/app/app.pri)
+include($$PWD/src/core/audio/audio.pri)
+include($$PWD/src/core/download/download.pri)
+include($$PWD/src/core/metadata/metadata.pri)
+include($$PWD/src/platforms/bilibili/bilibili.pri)
+include($$PWD/src/ui/ui.pri)
 
-HEADERS += \
-    api/apiparser.h \
-    api/bilibiliclient.h \
-    api/bilibiliapi.h \
-    common.h \
-    config.h \
-    dlpages/biliaudiometadatadialog.h \
-    dlpages/bilidltool.h \
-    dlpages/bilidlwidget.h \
-    dlpages/bilitypes.h \
-    dlpages/bilisearchbar.h \
-    dlpages/bilisidepanel.h \
-    dlpages/biliresultitem.h \
-    dlpages/biliresultlist.h \
-    download/downloadmanager.h \
-    download/downloadtask.h \
-    downloadwidget.h \
-    explorewidget.h \
-    framelesswidget.h \
-    localwidget.h \
-    mainwidget.h \
-    playerwidget.h \
-    titlebar.h
-
-RESOURCES += \
-    resources.qrc
-
-FORMS +=
-
-INCLUDEPATH += $$PWD/musicItem
-INCLUDEPATH += $$PWD/dlpages
-include($$PWD/musicItem/musicItemMoudle.pri)
-include($$PWD/audio/audio.pri)
+RESOURCES += $$PWD/resources.qrc
 
 
 
