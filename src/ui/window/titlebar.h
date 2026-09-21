@@ -16,9 +16,6 @@ private:
     QPushButton *closeButton, *maximumButton, *minimunButton;
     QIcon closeButtonIcon, maximumButtonIcon, minimumButtonIcon;//按钮背景icon
 
-    bool isMousePressed = false;
-    QPoint mouseStartPoint;
-    QPoint windowStartPoint;
 signals:
     void buttonEvent(const QString& signal);
 protected:
@@ -27,8 +24,7 @@ private slots:
     void onButtonClicked();
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 };
 
 #endif // TITLEBAR_H

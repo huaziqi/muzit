@@ -6,10 +6,11 @@
 
 namespace {
 
-QString simplify(QString text)
+
+QString normolizeWhiteSpace(QString text)
 {
-    text.replace(QChar(0x3000), QLatin1Char(' '));
-    return text.simplified();
+    text.replace(QChar(0x3000), QLatin1Char(' ')); //将全角空格转换为半角
+    return text.simplified(); //将换行，缩进和连续空格变成一个空格
 }
 
 QString withoutEdgeSeparators(QString text)
@@ -20,12 +21,12 @@ QString withoutEdgeSeparators(QString text)
         QStringLiteral(R"(\s*[-–—|｜:：·/]+\s*$)"));
     text.remove(leading);
     text.remove(trailing);
-    return simplify(text);
+    return normolizeWhiteSpace(text);
 }
 
 QString cleanTitle(QString text)
 {
-    text = simplify(text);
+    text = normolizeWhiteSpace(text);
 
     // Remove only decorations whose contents clearly describe the video,
     // preserving brackets that may be part of the actual song name.
@@ -69,7 +70,7 @@ QString cleanField(QString text)
 
 QString comparisonKey(QString text)
 {
-    text = simplify(text).toCaseFolded();
+    text = normolizeWhiteSpace(text).toCaseFolded();
     static const QRegularExpression punctuation(
         QStringLiteral(R"([\s\p{P}\p{S}]+)"));
     text.remove(punctuation);

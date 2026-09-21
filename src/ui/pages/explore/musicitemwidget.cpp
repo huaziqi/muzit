@@ -13,7 +13,13 @@ MusicItemWidget::MusicItemWidget(MusicItem* _musicItem, QWidget *parent)
     mainLayout = new QHBoxLayout(this);
     mainLayout->setContentsMargins(5, 5, 5, 10);
 
-    manager = new QNetworkAccessManager;
+    coverResizeTimer = new QTimer(this);
+    coverResizeTimer->setSingleShot(true);
+    coverResizeTimer->setInterval(80);
+    connect(coverResizeTimer, &QTimer::timeout,
+            this, &MusicItemWidget::updateCoverPixmap);
+
+    manager = new QNetworkAccessManager(this);
 
     //this->setStyleSheet("background-color: #000000;");
     gotCover();
@@ -26,23 +32,27 @@ MusicItemWidget::~MusicItemWidget(){
 void MusicItemWidget::resizeEvent(QResizeEvent *event){
     QWidget::resizeEvent(event);
 
-    int parentWidth = this->parentWidget()->parentWidget()->width();
-    // qDebug() << this->parentWidget()->parentWidget()->parentWidget();
+    const QMargins margins = mainLayout->contentsMargins();
+    const int infoWidth = infoWidget ? infoWidget->width() : 200;
+    pendingCoverWidth = qMax(1, width() - infoWidth - margins.left()
+                                  - margins.right() - mainLayout->spacing());
 
-    int lineLabelNum = common::getColumn(parentWidth);
-    // qDebug() << "in music item:" << parentWidth;
-    int pixWidth = parentWidth / lineLabelNum - 200;
-    this->resize(pixWidth + 200, qMax(infoMinHeight, static_cast<int>(pixWidth * aspectRadio)));
-    if(!coverPixMap.isNull()){
-        if(qAbs(lastWidth - pixWidth) > 8){
-            coverPixMap = originCoverPixmap.scaled(pixWidth, pixWidth * aspectRadio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            coverLabel->setPixmap(coverPixMap);
-            lastWidth = pixWidth;
-        }
-    }
-    // qDebug() << parentWidth;
-    // qDebug() << "resized: " << this->width() <<" " << pixWidth;
-    // qDebug() << "";
+    if (!originCoverPixmap.isNull() && qAbs(lastWidth - pendingCoverWidth) > 8)
+        coverResizeTimer->start();
+}
+
+void MusicItemWidget::updateCoverPixmap()
+{
+    if (!coverLabel || originCoverPixmap.isNull() || pendingCoverWidth <= 0)
+        return;
+
+    coverPixMap = originCoverPixmap.scaled(
+        pendingCoverWidth,
+        qMax(1, static_cast<int>(pendingCoverWidth * aspectRadio)),
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation);
+    coverLabel->setPixmap(coverPixMap);
+    lastWidth = pendingCoverWidth;
 }
 
 void MusicItemWidget::gotCover()
@@ -74,6 +84,7 @@ void MusicItemWidget::gotCover()
             }
         }
         initLayout();
+        coverReply->deleteLater();
     });
 }
 
@@ -132,6 +143,11 @@ void MusicItemWidget::initLayout(){
     infoWidget->setFixedWidth(200);
     mainLayout->addWidget(infoWidget);
     initInfo();
+    pendingCoverWidth = qMax(1, width() - infoWidget->width()
+                                  - mainLayout->contentsMargins().left()
+                                  - mainLayout->contentsMargins().right()
+                                  - mainLayout->spacing());
+    coverResizeTimer->start();
 
 }
 

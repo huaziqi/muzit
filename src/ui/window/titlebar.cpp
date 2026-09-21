@@ -102,27 +102,22 @@ void TitleBar::onButtonClicked()
 void TitleBar::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        isMousePressed = true;
-        mouseStartPoint = event->globalPosition().toPoint();
-        windowStartPoint = this->window()->frameGeometry().topLeft();
+        QWindow *handle = window()->windowHandle();
+        if (handle && handle->startSystemMove()) {
+            event->accept();
+            return;
+        }
     }
     QWidget::mousePressEvent(event);
 }
 
-void TitleBar::mouseMoveEvent(QMouseEvent *event)
-{
-    if (isMousePressed) {
-        QPoint offset = event->globalPosition().toPoint() - mouseStartPoint;
-        this->window()->move(windowStartPoint + offset);
-    }
-    QWidget::mouseMoveEvent(event);
-}
-
-void TitleBar::mouseReleaseEvent(QMouseEvent *event)
+void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        isMousePressed = false;
+        emit buttonEvent("maxiWindow");
+        event->accept();
+        return;
     }
-    QWidget::mouseReleaseEvent(event);
+    QWidget::mouseDoubleClickEvent(event);
 }
 

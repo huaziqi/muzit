@@ -59,24 +59,41 @@ void ExploreWidget::rebuildGridLayout()
 {
     QLayoutItem* item;
     while ((item = currentWeekSongsLayout->takeAt(0)) != nullptr) {
-        if (QWidget* widget = item->widget()) { //当item->widget是QWidget时进入if，一个语法糖
-            currentWeekSongsLayout->removeWidget(widget);
-            widget->setParent(nullptr);
-        }
         delete item;
     }
 
-// 重新按新的列数添加 widgets
-    for (int i = 0; i < currentRankSongs.count(); ++i) {
-        auto widget = new MusicItemWidget(currentRankSongs[i]);
+    if (currentRankSongWidgets.count() != currentRankSongs.count()) {
+        for (MusicItemWidget *widget : currentRankSongWidgets)
+            delete widget;
+        currentRankSongWidgets.clear();
+
+        for (MusicItem *song : currentRankSongs)
+            currentRankSongWidgets.append(new MusicItemWidget(song));
+    }
+
+    // 列数变化时只重新排列已有卡片，避免重复创建控件和请求封面。
+    for (int i = 0; i < currentRankSongWidgets.count(); ++i) {
         int line = i % currentGridColumn;
         if(currentGridColumn == 1) //currentGridColumn=1时会出问题
             line = 0;
-        currentWeekSongsLayout->addWidget(widget, i / currentGridColumn, line);
+        currentWeekSongsLayout->addWidget(currentRankSongWidgets[i],
+                                          i / currentGridColumn, line);
     }
 
     currentWeekSongsWidget->adjustSize();
     weeklyMusicWidget->adjustSize();
+}
+
+void ExploreWidget::clearRankWidgets()
+{
+    if (currentWeekSongsLayout) {
+        while (QLayoutItem *item = currentWeekSongsLayout->takeAt(0))
+            delete item;
+    }
+
+    for (MusicItemWidget *widget : currentRankSongWidgets)
+        delete widget;
+    currentRankSongWidgets.clear();
 }
 
 
@@ -177,6 +194,8 @@ void ExploreWidget::getCurrentWeekRank()
 {
     if(currentWeekId == -1)
         return;
+
+    clearRankWidgets();
     while(!currentRankSongs.empty()){
         MusicItem* tempItem = currentRankSongs.last();
         currentRankSongs.pop_back();

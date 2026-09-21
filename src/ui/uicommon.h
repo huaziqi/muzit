@@ -23,6 +23,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QWidget>
+#include <QWindow>
 #include <QFrame>
 #include <QScrollArea>
 #include <QPoint>

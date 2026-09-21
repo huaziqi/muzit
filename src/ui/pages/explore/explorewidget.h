@@ -42,11 +42,13 @@ private:
     // QNetworkRequest *currentRankRequest;
     QNetworkReply *currentRankReply;
     QVector<MusicItem*> currentRankSongs;
-    QScrollArea* currentWeekSongsArea;
-    QWidget* currentWeekSongsWidget;
-    QGridLayout* currentWeekSongsLayout;
+    QScrollArea* currentWeekSongsArea = nullptr;
+    QWidget* currentWeekSongsWidget = nullptr;
+    QGridLayout* currentWeekSongsLayout = nullptr;
+    QVector<MusicItemWidget*> currentRankSongWidgets;
     int currentGridColumn = -1;
     void rebuildGridLayout();
+    void clearRankWidgets();
     bool weeklyMusicLayoutInited = false;//判断是否初始化过了
 
 

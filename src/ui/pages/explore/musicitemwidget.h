@@ -13,16 +13,18 @@ public:
 private:
     //一些布局
     QHBoxLayout* mainLayout;
-    QLabel *coverLabel;
+    QLabel *coverLabel = nullptr;
     MusicItem *musicItem;
     QString coverFileName;
     QPixmap coverPixMap, originCoverPixmap;
     int pixMinWidth, pixMaxWidth;
     int infoMinHeight;
     int lastWidth;
+    int pendingCoverWidth = 0;
     double aspectRadio = 0.55; //pixMap长宽比
+    QTimer *coverResizeTimer;
 
-    QWidget* infoWidget; //右侧信息栏
+    QWidget* infoWidget = nullptr; //右侧信息栏
     QVBoxLayout *infoLayout;
     QLabel* titleLabel, *authorLabel, * playedNumLabel;
     QFont labelFont;
@@ -37,6 +39,7 @@ private:
     void initLayout();
     void initInfo();
     void drawPixMap(int width, int height);
+    void updateCoverPixmap();
 signals:
 };
 
