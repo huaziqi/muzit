@@ -186,6 +186,8 @@ void Mp3Transcoder::initializeOutput(
         &context.outputFormat->pb,
         outputPath.constData(),
         AVIO_FLAG_WRITE);
+    QString error;
+    FFmpegUtils::applyMetadata(context.outputFormat, options.metaData, error);
 
     avformat_write_header(context.outputFormat, nullptr);
 }

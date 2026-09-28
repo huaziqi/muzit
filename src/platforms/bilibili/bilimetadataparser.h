@@ -1,7 +1,7 @@
 #ifndef BILIMETADATAPARSER_H
 #define BILIMETADATAPARSER_H
 
-#include "core/metadata/metadatatypes.h"
+#include "metadatatypes.h"
 
 #include <QString>
 #include <QVector>

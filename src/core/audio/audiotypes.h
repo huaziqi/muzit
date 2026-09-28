@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QMetaType>
+#include "core/metadata/metadatatypes.h"
 
 enum class AudioOutputFormat
 {
@@ -13,6 +14,7 @@ enum class AudioOutputFormat
 
 struct AudioConvertOptions
 {
+    AudioMetadata metaData;
     QString inputPath;
     QString outputPath;
     AudioOutputFormat format = AudioOutputFormat::M4a;

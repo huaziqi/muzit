@@ -2,6 +2,7 @@
 #define AUDIOCONVERTER_H
 
 #include "audiotypes.h"
+#include "ffmpegutils.h"
 
 #include <QString>
 #include <functional>

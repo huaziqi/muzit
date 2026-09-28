@@ -2,8 +2,8 @@
 #define BILIDLTOOL_H
 
 #include "core/download/downloadmanager.h"
-#include "platforms/bilibili/api/bilibiliapi.h"
-#include "platforms/bilibili/api/apiparser.h"
+#include "api/bilibiliapi.h"
+#include "api/apiparser.h"
 #include "core/audio/audioconvertmanager.h"
 
 #include <QObject>

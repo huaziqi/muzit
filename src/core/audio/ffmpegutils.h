@@ -1,10 +1,15 @@
 #ifndef FFMPEGUTILS_H
 #define FFMPEGUTILS_H
 
-class FFmpegUtils
-{
-public:
-    FFmpegUtils();
-};
+#include "core/metadata/metadatatypes.h"
+
+struct AVFormatContext;
+
+namespace FFmpegUtils {
+bool applyMetadata(AVFormatContext* output,
+                   const AudioMetadata metaData,
+                   QString& error);
+}
+
 
 #endif // FFMPEGUTILS_H

@@ -64,6 +64,7 @@ struct AudioDownloadJob
         options.outputPath = outputPath;
         options.format = outputFormat;
         options.removeSourceAfterSuccess = true;
+        options.metaData = metadata;
         return options;
     }
 };

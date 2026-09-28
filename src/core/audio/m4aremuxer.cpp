@@ -83,6 +83,8 @@ bool M4aRemuxer::convert(
     if(checkFail(result < 0 || outputContext == nullptr, error, "无法创建 M4A 输出容器", &inputContext, &outputContext))
         return false;
 
+
+
     AVStream *outputStream = avformat_new_stream(outputContext, nullptr);
     if(checkFail(outputStream == nullptr, error, "无法创建输出音频流", &inputContext, &outputContext))
         return false;
@@ -102,6 +104,8 @@ bool M4aRemuxer::convert(
         );
     if(checkFail(result < 0, error, "无法打开输出文件", &inputContext, &outputContext))
         return false;
+
+    FFmpegUtils::applyMetadata(outputContext, options.metaData, error);
 
     result = avformat_write_header(outputContext, nullptr);
     if(checkFail(result < 0, error, "无法写入 M4A 文件头", &inputContext, &outputContext, &outputContext->pb))
