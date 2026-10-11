@@ -30,17 +30,24 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
     mainLayout->addLayout(bodyLayout, 1);
 
     // 信号连接
+    //申请搜索
     connect(searchBar,  &BiliSearchBar::searchRequested,
             this,       &BiliDLWidget::onSearchRequested);
+    //选择item
     connect(resultList, &BiliResultList::itemSelected,
             this,       &BiliDLWidget::onItemSelected);
+    //发出下载请求
     connect(resultList, &BiliResultList::downloadRequested,
             this,       &BiliDLWidget::onDownloadRequested);
+    //添加收藏请求
     connect(resultList, &BiliResultList::favoriteRequested,
             this,       &BiliDLWidget::onFavoriteRequested);
+    //
     connect(resultList, &BiliResultList::partsSelectionChanged,
             this, &BiliDLWidget::onPartsSelectionChanged);
     connect(biliDLTool, &BiliDLTool::videoInfoReady,
+
+    //
             this, &BiliDLWidget::onVideoInfoReady);
     connect(biliDLTool, &BiliDLTool::videoInfoFailed,
             this, &BiliDLWidget::onVideoInfoFailed);
@@ -48,13 +55,13 @@ BiliDLWidget::BiliDLWidget(DownloadManager *_downloadManager, QWidget *parent)
             this, &BiliDLWidget::onPartAudioStreamsReady);
     connect(biliDLTool, &BiliDLTool::partAudioStreamsFailed,
             this, &BiliDLWidget::onPartAudioStreamsFailed);
+    //关键词搜索成功
     connect(bilibiliClient, &BilibiliClient::searchFinished,
             this, &BiliDLWidget::onKeywordSearchFinished);
+    //关键词搜索失败
     connect(bilibiliClient, &BilibiliClient::searchFailed,
             this, &BiliDLWidget::onKeywordSearchFailed);
 
-    // 加载演示数据
-    //loadDemoData();
 }
 
 void BiliDLWidget::onSearchRequested(const QString &keyword, BiliSearchType type, int pageSize)

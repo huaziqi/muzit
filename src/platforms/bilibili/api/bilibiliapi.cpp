@@ -51,6 +51,9 @@ QNetworkRequest BilibiliApi::weeklySongs(int listId)
     return createRequest(url);
 }
 
+
+//https://api.bilibili.com/x/web-interface/wbi/view?bvid=BV1b4pL6JEXG
+//没有分p时part中的title和视频的title一样
 QNetworkRequest BilibiliApi::videoInfoRequest(QString bvid)
 {
     QUrl url(

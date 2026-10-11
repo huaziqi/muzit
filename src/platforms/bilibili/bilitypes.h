@@ -22,6 +22,7 @@ struct BiliAudioStream
     QString codecs;
 };
 
+//没有分p时part中的title和视频的title一样
 struct BiliPlayUrlInfo
 {
     qint64 cid = 0;
