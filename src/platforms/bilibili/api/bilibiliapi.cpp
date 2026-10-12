@@ -67,6 +67,9 @@ QNetworkRequest BilibiliApi::videoInfoRequest(QString bvid)
 
 }
 
+
+//https://api.bilibili.com/x/player/wbi/v2?bvid=...&cid=...
+
 QNetworkRequest BilibiliApi::playUrlRequest(const QString &bvid, qint64 cid)
 {
     QUrl url(
